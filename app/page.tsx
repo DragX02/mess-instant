@@ -189,7 +189,8 @@ export default function Home() {
               Conçu pour les équipes B2B
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Tout ce dont vous avez besoin pour une communication d'équipe sécurisée et organisée.
+              Tout ce dont vous avez besoin pour une communication d&apos;équipe sécurisée et
+              organisée.
             </p>
           </div>
 
@@ -245,7 +246,7 @@ export default function Home() {
               <div>
                 <h3 className="text-xl font-semibold font-sans mb-2">Flexibilité totale</h3>
                 <p className="text-muted-foreground">
-                  Hébergé, self-hosted ou hybride. API complète pour l'intégration.
+                  Hébergé, self-hosted ou hybride. API complète pour l&apos;intégration.
                 </p>
               </div>
             </div>
@@ -279,7 +280,7 @@ export default function Home() {
                 <ul className="space-y-3 text-sm">
                   <li className="flex items-start gap-3">
                     <span className="text-primary font-bold mt-0.5">✓</span>
-                    <span>Jusqu'à 3 utilisateurs</span>
+                    <span>Jusqu&apos;à 3 utilisateurs</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-primary font-bold mt-0.5">✓</span>
@@ -322,7 +323,7 @@ export default function Home() {
                 <ul className="space-y-3 text-sm">
                   <li className="flex items-start gap-3">
                     <span className="text-primary font-bold mt-0.5">✓</span>
-                    <span>Jusqu'à 50 utilisateurs</span>
+                    <span>Jusqu&apos;à 50 utilisateurs</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-primary font-bold mt-0.5">✓</span>
@@ -346,7 +347,7 @@ export default function Home() {
                   nativeButton={false}
                   render={<Link href="/auth/inscription" />}
                 >
-                  Commencer l'essai
+                  Commencer l&apos;essai
                 </Button>
               </CardContent>
             </Card>
@@ -396,7 +397,7 @@ export default function Home() {
       <section className="bg-gradient-to-r from-primary/5 to-secondary/5 border-y border-border py-16 md:py-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold font-sans mb-4">
-            Prêt à transformer votre communication d'équipe ?
+            Prêt à transformer votre communication d&apos;équipe ?
           </h2>
           <p className="text-lg text-muted-foreground mb-8">
             Commencez gratuitement. Aucune carte bancaire requise.

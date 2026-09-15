@@ -1,15 +1,25 @@
 "use client"
 
 import { useTheme } from "next-themes"
-import { useEffect, useState } from "react"
+import { useSyncExternalStore } from "react"
+
+function subscribe() {
+  return () => {}
+}
+
+// Renvoie false pendant le rendu serveur et lors de l'hydratation, puis true une fois
+// sur le client, sans passer par un setState dans un effet (voir react-hooks/set-state-in-effect).
+function useMounted() {
+  return useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  )
+}
 
 export function ThemeToggle() {
-  const [mounted, setMounted] = useState(false)
+  const mounted = useMounted()
   const { theme, setTheme } = useTheme()
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   if (!mounted) {
     return <div className="w-10 h-10" />

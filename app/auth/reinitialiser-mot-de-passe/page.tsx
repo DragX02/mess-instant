@@ -1,12 +1,6 @@
 import { Suspense } from "react"
 import Link from "next/link"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ResetPasswordForm } from "./reset-password-form"
 
 export default function ReinitialiserMotDePassePage() {

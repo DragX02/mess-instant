@@ -7,13 +7,7 @@ import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function ConnexionPage() {
   const router = useRouter()
@@ -51,9 +45,7 @@ export default function ConnexionPage() {
             Helix
           </Link>
           <CardTitle className="text-2xl mt-4">Connexion</CardTitle>
-          <CardDescription>
-            Connectez-vous à votre espace d&apos;équipe.
-          </CardDescription>
+          <CardDescription>Connectez-vous à votre espace d&apos;équipe.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">

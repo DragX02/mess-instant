@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -14,10 +14,16 @@ export default function Home() {
           <div className="text-2xl font-bold font-sans text-primary">Helix</div>
 
           <nav className="hidden md:flex items-center gap-12">
-            <a href="#features" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
+            <a
+              href="#features"
+              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+            >
               Fonctionnalités
             </a>
-            <a href="#pricing" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
+            <a
+              href="#pricing"
+              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+            >
               Tarifs
             </a>
           </nav>
@@ -42,12 +48,18 @@ export default function Home() {
                 <span className="text-primary">Helix porte le signal.</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-md">
-                La messagerie temps réel conçue pour les équipes B2B. Conversations sécurisées, groupes organisés, permissions natives.
+                La messagerie temps réel conçue pour les équipes B2B. Conversations sécurisées,
+                groupes organisés, permissions natives.
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button size="lg" className="w-full sm:w-auto" nativeButton={false} render={<Link href="/auth/inscription" />}>
+              <Button
+                size="lg"
+                className="w-full sm:w-auto"
+                nativeButton={false}
+                render={<Link href="/auth/inscription" />}
+              >
                 Démarrer gratuitement
               </Button>
               <a
@@ -61,7 +73,11 @@ export default function Home() {
 
           {/* SVG Minimaliste */}
           <div className="flex justify-center">
-            <svg viewBox="0 0 300 300" className="w-full max-w-sm h-auto" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              viewBox="0 0 300 300"
+              className="w-full max-w-sm h-auto"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <defs>
                 <style>
                   {`
@@ -78,19 +94,88 @@ export default function Home() {
               <circle cx="150" cy="150" r="14" fill="currentColor" className="text-primary pulse" />
 
               {/* Nœuds satellites */}
-              <circle cx="80" cy="80" r="9" fill="currentColor" className="text-secondary opacity-80" />
-              <circle cx="220" cy="80" r="9" fill="currentColor" className="text-secondary opacity-80" />
-              <circle cx="150" cy="240" r="9" fill="currentColor" className="text-secondary opacity-80" />
+              <circle
+                cx="80"
+                cy="80"
+                r="9"
+                fill="currentColor"
+                className="text-secondary opacity-80"
+              />
+              <circle
+                cx="220"
+                cy="80"
+                r="9"
+                fill="currentColor"
+                className="text-secondary opacity-80"
+              />
+              <circle
+                cx="150"
+                cy="240"
+                r="9"
+                fill="currentColor"
+                className="text-secondary opacity-80"
+              />
 
               {/* Lignes de connexion principales */}
-              <line x1="150" y1="150" x2="80" y2="80" stroke="currentColor" strokeWidth="2.5" className="text-primary opacity-40" />
-              <line x1="150" y1="150" x2="220" y2="80" stroke="currentColor" strokeWidth="2.5" className="text-primary opacity-40" />
-              <line x1="150" y1="150" x2="150" y2="240" stroke="currentColor" strokeWidth="2.5" className="text-primary opacity-40" />
+              <line
+                x1="150"
+                y1="150"
+                x2="80"
+                y2="80"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                className="text-primary opacity-40"
+              />
+              <line
+                x1="150"
+                y1="150"
+                x2="220"
+                y2="80"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                className="text-primary opacity-40"
+              />
+              <line
+                x1="150"
+                y1="150"
+                x2="150"
+                y2="240"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                className="text-primary opacity-40"
+              />
 
               {/* Connexions entre satellites */}
-              <line x1="80" y1="80" x2="220" y2="80" stroke="currentColor" strokeWidth="2" className="text-border opacity-50" strokeDasharray="6,4" />
-              <line x1="80" y1="80" x2="150" y2="240" stroke="currentColor" strokeWidth="2" className="text-border opacity-50" strokeDasharray="6,4" />
-              <line x1="220" y1="80" x2="150" y2="240" stroke="currentColor" strokeWidth="2" className="text-border opacity-50" strokeDasharray="6,4" />
+              <line
+                x1="80"
+                y1="80"
+                x2="220"
+                y2="80"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="text-border opacity-50"
+                strokeDasharray="6,4"
+              />
+              <line
+                x1="80"
+                y1="80"
+                x2="150"
+                y2="240"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="text-border opacity-50"
+                strokeDasharray="6,4"
+              />
+              <line
+                x1="220"
+                y1="80"
+                x2="150"
+                y2="240"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="text-border opacity-50"
+                strokeDasharray="6,4"
+              />
             </svg>
           </div>
         </div>
@@ -100,7 +185,9 @@ export default function Home() {
       <section id="features" className="bg-muted/30 py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold font-sans mb-4">Conçu pour les équipes B2B</h2>
+            <h2 className="text-4xl md:text-5xl font-bold font-sans mb-4">
+              Conçu pour les équipes B2B
+            </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Tout ce dont vous avez besoin pour une communication d'équipe sécurisée et organisée.
             </p>
@@ -170,7 +257,9 @@ export default function Home() {
       <section id="pricing" className="py-20 md:py-28 bg-background">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold font-sans mb-4">Tarification transparent</h2>
+            <h2 className="text-4xl md:text-5xl font-bold font-sans mb-4">
+              Tarification transparent
+            </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Choisissez le plan qui correspond à vos besoins.
             </p>
@@ -205,7 +294,12 @@ export default function Home() {
                     <span className="text-muted-foreground">Intégrations API</span>
                   </li>
                 </ul>
-                <Button variant="outline" className="w-full mt-auto" nativeButton={false} render={<Link href="/auth/inscription" />}>
+                <Button
+                  variant="outline"
+                  className="w-full mt-auto"
+                  nativeButton={false}
+                  render={<Link href="/auth/inscription" />}
+                >
                   Commencer
                 </Button>
               </CardContent>
@@ -247,7 +341,11 @@ export default function Home() {
                     <span>Support prioritaire</span>
                   </li>
                 </ul>
-                <Button className="w-full mt-auto" nativeButton={false} render={<Link href="/auth/inscription" />}>
+                <Button
+                  className="w-full mt-auto"
+                  nativeButton={false}
+                  render={<Link href="/auth/inscription" />}
+                >
                   Commencer l'essai
                 </Button>
               </CardContent>
@@ -323,18 +421,42 @@ export default function Home() {
             <div>
               <h4 className="font-semibold text-sm mb-4">Produit</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#features" className="hover:text-primary transition-colors">Fonctionnalités</a></li>
-                <li><a href="#pricing" className="hover:text-primary transition-colors">Tarifs</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Documentation</a></li>
+                <li>
+                  <a href="#features" className="hover:text-primary transition-colors">
+                    Fonctionnalités
+                  </a>
+                </li>
+                <li>
+                  <a href="#pricing" className="hover:text-primary transition-colors">
+                    Tarifs
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-primary transition-colors">
+                    Documentation
+                  </a>
+                </li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-semibold text-sm mb-4">Légal</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-primary transition-colors">Conditions</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Confidentialité</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Mentions légales</a></li>
+                <li>
+                  <a href="#" className="hover:text-primary transition-colors">
+                    Conditions
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-primary transition-colors">
+                    Confidentialité
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-primary transition-colors">
+                    Mentions légales
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -349,12 +471,10 @@ export default function Home() {
           </div>
 
           <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-muted-foreground">
-              © 2026 Helix. Tous droits réservés.
-            </p>
+            <p className="text-sm text-muted-foreground">© 2026 Helix. Tous droits réservés.</p>
           </div>
         </div>
       </footer>
     </div>
-  );
+  )
 }

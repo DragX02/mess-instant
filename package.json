@@ -10,6 +10,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
+    "comptes-test": "node --env-file=.env scripts/comptes-test.mjs",
     "postinstall": "prisma skills sync || exit 0"
   },
   "dependencies": {

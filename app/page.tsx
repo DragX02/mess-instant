@@ -15,6 +15,14 @@ export default function Home() {
 
           <div className="flex items-center gap-3">
             <ThemeToggle />
+            <Button
+              size="sm"
+              variant="outline"
+              nativeButton={false}
+              render={<Link href="/discussion" />}
+            >
+              Canal info
+            </Button>
             <Button size="sm" nativeButton={false} render={<Link href="/auth/connexion" />}>
               Se connecter
             </Button>

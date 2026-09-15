@@ -4,9 +4,11 @@ export type CurrentUser = {
   isAdmin: boolean
 }
 
+export type ConversationType = "INFO" | "PUBLIC" | "GROUP" | "PRIVATE"
+
 export type ConversationItem = {
   id: string
-  type: "INFO" | "PUBLIC" | "GROUP" | "PRIVATE"
+  type: ConversationType
   name: string | null
   accepted: boolean
   createdById: string | null
@@ -41,4 +43,10 @@ export type FriendsData = {
   friends: Friend[]
   received: Friend[]
   sent: Friend[]
+}
+
+export type GroupMember = {
+  id: string
+  name: string
+  role: string
 }

@@ -1,22 +1,18 @@
 "use client"
 
-import { useState, type FormEvent } from "react"
+import { useState, type SubmitEvent } from "react"
+import { api, apiSend } from "@/lib/api"
+import type { Friend, FriendsData } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import type { Friend, FriendsData } from "./types"
+import { PersonRow } from "./person-row"
 
-function FriendRow({ friend, children }: { friend: Friend; children: React.ReactNode }) {
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-md border border-border bg-card px-3 py-2">
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-secondary-foreground">
-        {friend.name.charAt(0).toUpperCase()}
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium">{friend.name}</p>
-        <p className="truncate text-xs text-muted-foreground">{friend.email}</p>
-      </div>
-      <div className="flex gap-2">{children}</div>
-    </div>
+    <section>
+      <h2 className="mb-2 font-semibold">{title}</h2>
+      <div className="flex flex-col gap-2">{children}</div>
+    </section>
   )
 }
 
@@ -33,30 +29,25 @@ export function FriendsPanel({
   const [info, setInfo] = useState("")
   const [isError, setIsError] = useState(false)
 
-  async function addFriend(event: FormEvent<HTMLFormElement>) {
+  async function addFriend(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    const response = await fetch("/api/amis", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: email }),
-    })
-    const result = await response.json()
+    const result = await api("/api/amis", { method: "POST", body: { email } })
 
-    if (!response.ok) {
-      setIsError(true)
+    setIsError(!result.ok)
+
+    if (!result.ok) {
       setInfo(result.error)
       return
     }
 
-    setIsError(false)
     setInfo("Demande d'ami envoyée !")
     setEmail("")
     onChange()
   }
 
   async function accept(friendshipId: string) {
-    await fetch("/api/amis/" + friendshipId, { method: "PATCH" })
+    await apiSend("/api/amis/" + friendshipId, "PATCH")
     onChange()
   }
 
@@ -64,8 +55,16 @@ export function FriendsPanel({
     if (!confirm(question)) {
       return
     }
-    await fetch("/api/amis/" + friendshipId, { method: "DELETE" })
+    await apiSend("/api/amis/" + friendshipId, "DELETE")
     onChange()
+  }
+
+  function row(friend: Friend, actions: React.ReactNode) {
+    return (
+      <PersonRow key={friend.friendshipId} name={friend.name} subtitle={friend.email}>
+        {actions}
+      </PersonRow>
+    )
   }
 
   return (
@@ -91,11 +90,11 @@ export function FriendsPanel({
         </section>
 
         {data.received.length > 0 && (
-          <section>
-            <h2 className="mb-2 font-semibold">Demandes reçues ({data.received.length})</h2>
-            <div className="flex flex-col gap-2">
-              {data.received.map((friend) => (
-                <FriendRow key={friend.friendshipId} friend={friend}>
+          <Section title={"Demandes reçues (" + data.received.length + ")"}>
+            {data.received.map((friend) =>
+              row(
+                friend,
+                <>
                   <Button size="sm" onClick={() => accept(friend.friendshipId)}>
                     Accepter
                   </Button>
@@ -106,22 +105,22 @@ export function FriendsPanel({
                   >
                     Refuser
                   </Button>
-                </FriendRow>
-              ))}
-            </div>
-          </section>
+                </>,
+              ),
+            )}
+          </Section>
         )}
 
-        <section>
-          <h2 className="mb-2 font-semibold">Mes amis ({data.friends.length})</h2>
+        <Section title={"Mes amis (" + data.friends.length + ")"}>
           {data.friends.length === 0 && (
             <p className="text-sm text-muted-foreground">
               Vous n&apos;avez pas encore d&apos;amis.
             </p>
           )}
-          <div className="flex flex-col gap-2">
-            {data.friends.map((friend) => (
-              <FriendRow key={friend.friendshipId} friend={friend}>
+          {data.friends.map((friend) =>
+            row(
+              friend,
+              <>
                 <Button size="sm" onClick={() => onMessage(friend.id)}>
                   Message
                 </Button>
@@ -132,28 +131,26 @@ export function FriendsPanel({
                 >
                   Retirer
                 </Button>
-              </FriendRow>
-            ))}
-          </div>
-        </section>
+              </>,
+            ),
+          )}
+        </Section>
 
         {data.sent.length > 0 && (
-          <section>
-            <h2 className="mb-2 font-semibold">Demandes envoyées</h2>
-            <div className="flex flex-col gap-2">
-              {data.sent.map((friend) => (
-                <FriendRow key={friend.friendshipId} friend={friend}>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => remove(friend.friendshipId, "Annuler cette demande ?")}
-                  >
-                    Annuler
-                  </Button>
-                </FriendRow>
-              ))}
-            </div>
-          </section>
+          <Section title="Demandes envoyées">
+            {data.sent.map((friend) =>
+              row(
+                friend,
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => remove(friend.friendshipId, "Annuler cette demande ?")}
+                >
+                  Annuler
+                </Button>,
+              ),
+            )}
+          </Section>
         )}
       </div>
     </div>

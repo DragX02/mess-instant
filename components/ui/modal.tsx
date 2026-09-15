@@ -1,8 +1,10 @@
 "use client"
 
 import { X } from "lucide-react"
+import { IconButton } from "@/components/ui/icon-button"
 
-export function Modal({
+/** Boîte de dialogue centrée, fermée au clic sur le fond ou sur la croix. */
+function Modal({
   title,
   onClose,
   children,
@@ -24,16 +26,14 @@ export function Modal({
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold">{title}</h2>
-          <button
-            onClick={onClose}
-            aria-label="Fermer"
-            className="rounded-md p-1 text-muted-foreground hover:bg-muted"
-          >
+          <IconButton label="Fermer" onClick={onClose}>
             <X className="h-5 w-5" />
-          </button>
+          </IconButton>
         </div>
         {children}
       </div>
     </div>
   )
 }
+
+export { Modal }

@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, type FormEvent } from "react"
+import { useState, type SubmitEvent } from "react"
+import { api } from "@/lib/api"
+import type { Friend } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Modal } from "./modal"
-import type { Friend } from "./types"
+import { Modal } from "@/components/ui/modal"
 
 export function NewPrivateDialog({
   friends,
@@ -19,25 +20,23 @@ export function NewPrivateDialog({
   const [email, setEmail] = useState("")
   const [error, setError] = useState("")
 
-  async function openConversation(body: { userId?: string; email?: string }) {
-    const response = await fetch("/api/conversations", {
+  async function openConversation(target: { userId?: string; email?: string }) {
+    const result = await api<{ id: string }>("/api/conversations", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type: "PRIVATE", ...body }),
+      body: { type: "PRIVATE", ...target },
     })
-    const data = await response.json()
 
-    if (!response.ok) {
-      setError(data.error)
+    if (!result.ok) {
+      setError(result.error)
       return
     }
 
-    onCreated(data.id)
+    onCreated(result.data.id)
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
-    openConversation({ email: email })
+    openConversation({ email })
   }
 
   return (

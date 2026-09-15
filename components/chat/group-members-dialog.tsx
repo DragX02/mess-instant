@@ -1,15 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { api } from "@/lib/api"
+import type { Friend, GroupMember } from "@/lib/types"
 import { Button } from "@/components/ui/button"
-import { Modal } from "./modal"
-import type { Friend } from "./types"
-
-type Member = {
-  id: string
-  name: string
-  role: string
-}
+import { Modal } from "@/components/ui/modal"
+import { PersonRow } from "./person-row"
 
 export function GroupMembersDialog({
   conversationId,
@@ -22,15 +18,15 @@ export function GroupMembersDialog({
   onClose: () => void
   onChange: () => void
 }) {
-  const [members, setMembers] = useState<Member[]>([])
+  const [members, setMembers] = useState<GroupMember[]>([])
   const [error, setError] = useState("")
   const [refresh, setRefresh] = useState(0)
 
   useEffect(() => {
     async function load() {
-      const response = await fetch("/api/conversations/" + conversationId + "/membres")
-      if (response.ok) {
-        setMembers(await response.json())
+      const result = await api<GroupMember[]>("/api/conversations/" + conversationId + "/membres")
+      if (result.ok) {
+        setMembers(result.data)
       }
     }
 
@@ -38,20 +34,18 @@ export function GroupMembersDialog({
   }, [conversationId, refresh])
 
   async function addMember(userId: string) {
-    const response = await fetch("/api/conversations/" + conversationId + "/membres", {
+    const result = await api("/api/conversations/" + conversationId + "/membres", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: userId }),
+      body: { userId },
     })
-    const data = await response.json()
 
-    if (!response.ok) {
-      setError(data.error)
+    if (!result.ok) {
+      setError(result.error)
       return
     }
 
     setError("")
-    setRefresh(refresh + 1)
+    setRefresh((value) => value + 1)
     onChange()
   }
 
@@ -61,29 +55,24 @@ export function GroupMembersDialog({
 
   return (
     <Modal title="Membres du groupe" onClose={onClose}>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-2">
         {members.map((member) => (
-          <div key={member.id} className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-secondary-foreground">
-              {member.name.charAt(0).toUpperCase()}
-            </div>
-            <span className="flex-1 truncate">{member.name}</span>
+          <PersonRow key={member.id} name={member.name}>
             {member.role === "OWNER" && <span className="text-xs text-primary">Créateur</span>}
-          </div>
+          </PersonRow>
         ))}
       </div>
 
       {friendsNotInGroup.length > 0 && (
         <div className="mt-4 border-t border-border pt-4">
           <p className="mb-2 text-sm font-medium">Ajouter un ami</p>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-2">
             {friendsNotInGroup.map((friend) => (
-              <div key={friend.id} className="flex items-center gap-2 px-2 py-1 text-sm">
-                <span className="flex-1 truncate">{friend.name}</span>
+              <PersonRow key={friend.id} name={friend.name}>
                 <Button size="sm" variant="outline" onClick={() => addMember(friend.id)}>
                   Ajouter
                 </Button>
-              </div>
+              </PersonRow>
             ))}
           </div>
         </div>

@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, type FormEvent } from "react"
+import { useState, type SubmitEvent } from "react"
+import { api } from "@/lib/api"
+import type { Friend } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Modal } from "./modal"
-import type { Friend } from "./types"
+import { Modal } from "@/components/ui/modal"
 
 export function NewGroupDialog({
   friends,
@@ -21,29 +22,25 @@ export function NewGroupDialog({
   const [error, setError] = useState("")
 
   function toggle(friendId: string) {
-    if (selected.includes(friendId)) {
-      setSelected(selected.filter((id) => id !== friendId))
-    } else {
-      setSelected([...selected, friendId])
-    }
+    setSelected((current) =>
+      current.includes(friendId) ? current.filter((id) => id !== friendId) : [...current, friendId],
+    )
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    const response = await fetch("/api/conversations", {
+    const result = await api<{ id: string }>("/api/conversations", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type: "GROUP", name: name, memberIds: selected }),
+      body: { type: "GROUP", name, memberIds: selected },
     })
-    const data = await response.json()
 
-    if (!response.ok) {
-      setError(data.error)
+    if (!result.ok) {
+      setError(result.error)
       return
     }
 
-    onCreated(data.id)
+    onCreated(result.data.id)
   }
 
   return (

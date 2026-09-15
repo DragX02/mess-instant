@@ -1,50 +1,12 @@
 "use client"
 
-import { useRef, useState, type ChangeEvent, type FormEvent } from "react"
+import { useRef, useState, type ChangeEvent, type SubmitEvent } from "react"
 import { Paperclip, Send, Smile, X } from "lucide-react"
-
-const EMOJIS = [
-  "😀",
-  "😁",
-  "😂",
-  "🤣",
-  "😊",
-  "😍",
-  "😘",
-  "😎",
-  "🤔",
-  "😅",
-  "😢",
-  "😭",
-  "😡",
-  "😱",
-  "🥳",
-  "😴",
-  "👍",
-  "👎",
-  "👏",
-  "🙏",
-  "💪",
-  "👋",
-  "🤝",
-  "✌️",
-  "❤️",
-  "💔",
-  "🔥",
-  "✨",
-  "🎉",
-  "🎁",
-  "💯",
-  "✅",
-  "❌",
-  "⚠️",
-  "☕",
-  "🍕",
-  "🍺",
-  "⚽",
-  "🎮",
-  "🚀",
-]
+import { cn } from "cn"
+import { api } from "@/lib/api"
+import { EMOJIS } from "@/lib/emojis"
+import { IconButton } from "@/components/ui/icon-button"
+import { EmojiPicker } from "./emoji-picker"
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024
 
@@ -65,7 +27,7 @@ export function MessageForm({
   const fileInput = useRef<HTMLInputElement>(null)
 
   function chooseFile(event: ChangeEvent<HTMLInputElement>) {
-    const chosen = event.target.files ? event.target.files[0] : null
+    const chosen = event.target.files?.[0] ?? null
 
     if (chosen && chosen.size > MAX_FILE_SIZE) {
       setError("Le fichier dépasse 10 Mo.")
@@ -74,7 +36,7 @@ export function MessageForm({
     }
 
     setError("")
-    setFile(chosen || null)
+    setFile(chosen)
   }
 
   function removeFile() {
@@ -84,15 +46,12 @@ export function MessageForm({
     }
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
 
     if (text.trim() === "" && !file) {
       return
     }
-
-    setSending(true)
-    setError("")
 
     const formData = new FormData()
     formData.append("content", text)
@@ -100,16 +59,16 @@ export function MessageForm({
       formData.append("file", file)
     }
 
-    const response = await fetch("/api/conversations/" + conversationId + "/messages", {
+    setSending(true)
+    setError("")
+    const result = await api("/api/conversations/" + conversationId + "/messages", {
       method: "POST",
       body: formData,
     })
-
     setSending(false)
 
-    if (!response.ok) {
-      const data = await response.json().catch(() => ({}))
-      setError(data.error || "Erreur lors de l'envoi du message.")
+    if (!result.ok) {
+      setError(result.error)
       return
     }
 
@@ -127,25 +86,14 @@ export function MessageForm({
         <div className="mb-2 flex w-fit max-w-full items-center gap-2 rounded-md border border-border bg-muted/60 px-2 py-1 text-sm">
           <Paperclip className="h-4 w-4 shrink-0" />
           <span className="truncate">{file.name}</span>
-          <button onClick={removeFile} aria-label="Retirer le fichier">
+          <IconButton label="Retirer le fichier" onClick={removeFile} className="p-0">
             <X className="h-4 w-4" />
-          </button>
+          </IconButton>
         </div>
       )}
 
       {showEmojis && (
-        <div className="mb-2 grid grid-cols-8 gap-1 rounded-lg border border-border bg-card p-2 sm:grid-cols-10">
-          {EMOJIS.map((emoji) => (
-            <button
-              key={emoji}
-              type="button"
-              onClick={() => setText(text + emoji)}
-              className="rounded p-1 text-xl hover:bg-muted"
-            >
-              {emoji}
-            </button>
-          ))}
-        </div>
+        <EmojiPicker emojis={EMOJIS} onSelect={(emoji) => setText(text + emoji)} className="mb-2" />
       )}
 
       <form
@@ -154,14 +102,13 @@ export function MessageForm({
       >
         <input ref={fileInput} type="file" className="hidden" onChange={chooseFile} />
 
-        <button
-          type="button"
+        <IconButton
+          label="Joindre un fichier"
           onClick={() => fileInput.current?.click()}
-          aria-label="Joindre un fichier"
-          className="text-muted-foreground hover:text-foreground"
+          className="p-0 hover:bg-transparent"
         >
           <Paperclip className="h-5 w-5" />
-        </button>
+        </IconButton>
 
         <input
           value={text}
@@ -171,14 +118,13 @@ export function MessageForm({
           className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
         />
 
-        <button
-          type="button"
+        <IconButton
+          label="Choisir un emoji"
           onClick={() => setShowEmojis(!showEmojis)}
-          aria-label="Choisir un emoji"
-          className={showEmojis ? "text-primary" : "text-muted-foreground hover:text-foreground"}
+          className={cn("p-0 hover:bg-transparent", showEmojis && "text-primary")}
         >
           <Smile className="h-5 w-5" />
-        </button>
+        </IconButton>
 
         <button
           type="submit"

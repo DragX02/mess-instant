@@ -93,11 +93,7 @@ export function MessageForm({
       )}
 
       {showEmojis && (
-        <EmojiPicker
-          emojis={EMOJIS}
-          onSelect={(emoji) => setText(text + emoji)}
-          className="mb-2"
-        />
+        <EmojiPicker emojis={EMOJIS} onSelect={(emoji) => setText(text + emoji)} className="mb-2" />
       )}
 
       <form

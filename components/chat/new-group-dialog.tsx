@@ -23,9 +23,7 @@ export function NewGroupDialog({
 
   function toggle(friendId: string) {
     setSelected((current) =>
-      current.includes(friendId)
-        ? current.filter((id) => id !== friendId)
-        : [...current, friendId],
+      current.includes(friendId) ? current.filter((id) => id !== friendId) : [...current, friendId],
     )
   }
 

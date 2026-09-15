@@ -50,11 +50,7 @@ export function ChatHeader({
               <Users />
               Membres
             </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => onDelete("Quitter ce groupe ?")}
-            >
+            <Button variant="destructive" size="sm" onClick={() => onDelete("Quitter ce groupe ?")}>
               Quitter
             </Button>
           </>

@@ -1,5 +1,6 @@
 'use client'
 
+import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -23,7 +24,9 @@ export default function Home() {
 
           <div className="flex items-center gap-3">
             <ThemeToggle />
-            <Button size="sm">Se connecter</Button>
+            <Button size="sm" nativeButton={false} render={<Link href="/auth/connexion" />}>
+              Se connecter
+            </Button>
           </div>
         </div>
       </header>
@@ -44,7 +47,7 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button size="lg" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full sm:w-auto" nativeButton={false} render={<Link href="/auth/inscription" />}>
                 Démarrer gratuitement
               </Button>
               <a
@@ -202,7 +205,7 @@ export default function Home() {
                     <span className="text-muted-foreground">Intégrations API</span>
                   </li>
                 </ul>
-                <Button variant="outline" className="w-full mt-auto">
+                <Button variant="outline" className="w-full mt-auto" nativeButton={false} render={<Link href="/auth/inscription" />}>
                   Commencer
                 </Button>
               </CardContent>
@@ -244,7 +247,7 @@ export default function Home() {
                     <span>Support prioritaire</span>
                   </li>
                 </ul>
-                <Button className="w-full mt-auto">
+                <Button className="w-full mt-auto" nativeButton={false} render={<Link href="/auth/inscription" />}>
                   Commencer l'essai
                 </Button>
               </CardContent>
@@ -300,7 +303,7 @@ export default function Home() {
           <p className="text-lg text-muted-foreground mb-8">
             Commencez gratuitement. Aucune carte bancaire requise.
           </p>
-          <Button size="lg">
+          <Button size="lg" nativeButton={false} render={<Link href="/auth/inscription" />}>
             Démarrer maintenant
           </Button>
         </div>

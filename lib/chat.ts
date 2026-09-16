@@ -1,4 +1,5 @@
 import { headers } from "next/headers"
+import { connection } from "next/server"
 import type { Conversation, User } from "@prisma/client"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
@@ -14,6 +15,8 @@ export async function getCurrentUser() {
 }
 
 export async function createDefaultChannels() {
+  await connection()
+
   await prisma.conversation.upsert({
     where: { id: "info" },
     update: {},

@@ -1,23 +1,27 @@
 name: CI
 
 on:
+  push:
+    branches: [main, dev]
   pull_request:
 
 jobs:
-  lint:
+  verifier:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://user:pass@localhost:5432/db
+      BETTER_AUTH_SECRET: ci-secret
+      BETTER_AUTH_URL: http://localhost:3000
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: .nvmrc
           cache: npm
 
       - run: npm ci
 
-      # Genere le client Prisma a partir du schema (aucune connexion base requise)
-      # afin que les types de @prisma/client existent pour le typecheck et le lint.
       - run: npx prisma generate
 
       - run: npm run format:check
@@ -25,3 +29,5 @@ jobs:
       - run: npm run lint
 
       - run: npm run typecheck
+
+      - run: npm run build

@@ -20,6 +20,8 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
+      - run: npm ci --omit=dev --dry-run --ignore-scripts
+
       - run: npm ci
 
       - run: npx prisma generate

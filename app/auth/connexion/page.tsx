@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
 import { PasswordInput } from "@/components/auth"
+import { translateError } from "@/lib/error-messages"
 
 export default function ConnexionPage() {
   const router = useRouter()
@@ -32,7 +33,7 @@ export default function ConnexionPage() {
     setLoading(false)
 
     if (signInError) {
-      setError(signInError.message ?? "Une erreur est survenue lors de la connexion.")
+      setError(translateError(signInError.message))
       return
     }
 

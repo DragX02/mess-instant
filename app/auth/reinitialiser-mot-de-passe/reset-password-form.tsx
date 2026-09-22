@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { PasswordInput, PasswordStrengthMeter } from "@/components/auth"
 import { validatePasswordStrength, type PasswordStrength } from "@/lib/password-validator"
+import { translateError } from "@/lib/error-messages"
 
 export function ResetPasswordForm() {
   const router = useRouter()
@@ -61,7 +62,7 @@ export function ResetPasswordForm() {
     setLoading(false)
 
     if (resetError) {
-      setError(resetError.message ?? "Une erreur est survenue.")
+      setError(translateError(resetError.message))
       return
     }
 

@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Logo } from "@/components/logo"
 import { PasswordInput, PasswordStrengthMeter } from "@/components/auth"
 import { validatePasswordStrength, type PasswordStrength } from "@/lib/password-validator"
+import { translateError } from "@/lib/error-messages"
 
 export default function InscriptionPage() {
   const router = useRouter()
@@ -58,7 +59,7 @@ export default function InscriptionPage() {
     setLoading(false)
 
     if (signUpError) {
-      setError(signUpError.message ?? "Une erreur est survenue lors de l'inscription.")
+      setError(translateError(signUpError.message))
       return
     }
 

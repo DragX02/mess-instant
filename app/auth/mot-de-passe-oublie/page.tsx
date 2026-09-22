@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
+import { translateError } from "@/lib/error-messages"
 
 export default function MotDePasseOubliePage() {
   const [email, setEmail] = useState("")
@@ -28,7 +29,7 @@ export default function MotDePasseOubliePage() {
     setLoading(false)
 
     if (requestError) {
-      setError(requestError.message ?? "Une erreur est survenue.")
+      setError(translateError(requestError.message))
       return
     }
 

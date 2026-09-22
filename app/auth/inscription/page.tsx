@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
 import { PasswordInput } from "@/components/password-input"
+import { PasswordStrengthMeter } from "@/components/password-strength-meter"
+import { validatePasswordStrength, type PasswordStrength } from "@/lib/password-validator"
 
 export default function InscriptionPage() {
   const router = useRouter()
@@ -19,10 +21,26 @@ export default function InscriptionPage() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
+    score: 0,
+    level: "weak",
+    feedback: [],
+    isValid: false,
+  })
+
+  const handlePasswordChange = (value: string) => {
+    setPassword(value)
+    setPasswordStrength(validatePasswordStrength(value))
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(null)
+
+    if (!passwordStrength.isValid) {
+      setError("Le mot de passe n'est pas assez fort. Veuillez respecter les critères.")
+      return
+    }
 
     if (password !== confirmPassword) {
       setError("Les mots de passe ne correspondent pas.")
@@ -84,7 +102,7 @@ export default function InscriptionPage() {
               />
             </div>
 
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="password">Mot de passe</Label>
               <PasswordInput
                 id="password"
@@ -92,8 +110,9 @@ export default function InscriptionPage() {
                 required
                 minLength={8}
                 value={password}
-                onChange={(event) => setPassword(event.target.value)}
+                onChange={(event) => handlePasswordChange(event.target.value)}
               />
+              <PasswordStrengthMeter strength={passwordStrength} />
             </div>
 
             <div className="flex flex-col gap-1.5">

@@ -70,7 +70,7 @@ export default function InscriptionPage() {
 
   async function handleGoogleSignUp() {
     setGoogleLoading(true)
-    await authClient.signUp.social({
+    await authClient.signIn.social({
       provider: "google",
       callbackURL: "/dashboard",
     })

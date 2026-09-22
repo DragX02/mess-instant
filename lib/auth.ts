@@ -12,14 +12,13 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    // TODO: repasser à `true` quand la vérification d'email sera testée (voir emailVerification.sendOnSignUp ci-dessous)
-    requireEmailVerification: false,
+    requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
       await sendResetPasswordEmail(user.email, url)
     },
   },
   emailVerification: {
-    sendOnSignUp: false,
+    sendOnSignUp: true,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
       await sendVerificationEmail(user.email, url)

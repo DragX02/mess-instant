@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Logo } from "@/components/logo"
 
 export default function MotDePasseOubliePage() {
   const [email, setEmail] = useState("")
@@ -37,11 +38,9 @@ export default function MotDePasseOubliePage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background text-foreground px-4 py-16">
       <Card className="w-full max-w-md rounded-[var(--radius)]">
-        <CardHeader>
-          <Link href="/" className="text-xl font-bold font-sans text-primary">
-            Helix
-          </Link>
-          <CardTitle className="text-2xl mt-4">Mot de passe oublié</CardTitle>
+        <CardHeader className="flex flex-col items-center pt-8">
+          <Logo href="/" full className="mb-6" />
+          <CardTitle className="text-2xl">Mot de passe oublié</CardTitle>
           <CardDescription>
             Indiquez votre email, nous vous envoyons un lien de réinitialisation.
           </CardDescription>

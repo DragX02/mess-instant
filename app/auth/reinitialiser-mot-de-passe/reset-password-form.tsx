@@ -7,6 +7,8 @@ import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { PasswordInput, PasswordStrengthMeter } from "@/components/auth"
+import { validatePasswordStrength, type PasswordStrength } from "@/lib/password-validator"
 
 export function ResetPasswordForm() {
   const router = useRouter()
@@ -18,6 +20,17 @@ export function ResetPasswordForm() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
+    score: 0,
+    level: "weak",
+    feedback: [],
+    isValid: false,
+  })
+
+  const handlePasswordChange = (value: string) => {
+    setNewPassword(value)
+    setPasswordStrength(validatePasswordStrength(value))
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -25,6 +38,11 @@ export function ResetPasswordForm() {
 
     if (!token) {
       setError("Lien invalide ou expiré. Redemandez une réinitialisation.")
+      return
+    }
+
+    if (!passwordStrength.isValid) {
+      setError("Le mot de passe n'est pas assez fort. Veuillez respecter les critères.")
       return
     }
 
@@ -48,7 +66,7 @@ export function ResetPasswordForm() {
     }
 
     setSuccess(true)
-    setTimeout(() => router.push("/connexion"), 2000)
+    setTimeout(() => router.push("/auth/connexion"), 2000)
   }
 
   if (!token) {
@@ -75,24 +93,23 @@ export function ResetPasswordForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <Label htmlFor="new-password">Nouveau mot de passe</Label>
-        <Input
+        <PasswordInput
           id="new-password"
-          type="password"
           autoComplete="new-password"
           required
           minLength={8}
           value={newPassword}
-          onChange={(event) => setNewPassword(event.target.value)}
+          onChange={(event) => handlePasswordChange(event.target.value)}
         />
+        <PasswordStrengthMeter strength={passwordStrength} />
       </div>
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="confirm-password">Confirmer le mot de passe</Label>
-        <Input
+        <PasswordInput
           id="confirm-password"
-          type="password"
           autoComplete="new-password"
           required
           minLength={8}

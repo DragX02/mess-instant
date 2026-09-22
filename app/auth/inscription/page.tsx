@@ -9,8 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
-import { PasswordInput } from "@/components/password-input"
-import { PasswordStrengthMeter } from "@/components/password-strength-meter"
+import { PasswordInput, PasswordStrengthMeter } from "@/components/auth"
 import { validatePasswordStrength, type PasswordStrength } from "@/lib/password-validator"
 
 export default function InscriptionPage() {

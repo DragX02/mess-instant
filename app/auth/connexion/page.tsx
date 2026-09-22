@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
-import { PasswordInput } from "@/components/password-input"
+import { PasswordInput } from "@/components/auth"
 
 export default function ConnexionPage() {
   const router = useRouter()

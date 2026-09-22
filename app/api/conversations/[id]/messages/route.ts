@@ -49,6 +49,7 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       fileUrl: message.fileUrl,
       fileName: message.fileName,
       fileType: message.fileType,
+      audioDuration: message.audioDuration,
       createdAt: message.createdAt,
       sender: { id: message.sender.id, name: message.sender.name || message.sender.email },
       reactions: reactions,
@@ -82,6 +83,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
   let fileUrl = null
   let fileName = null
   let fileType = null
+  let audioDuration = null
 
   if (file instanceof File && file.size > 0) {
     if (file.size > MAX_FILE_SIZE) {
@@ -101,6 +103,14 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
     fileUrl = "/api/fichiers/" + storedName
     fileName = file.name
     fileType = file.type || "application/octet-stream"
+
+    if (fileType.startsWith("audio/")) {
+      const duree = Number(formData.get("audioDuration"))
+
+      if (Number.isFinite(duree) && duree >= 1 && duree <= 600) {
+        audioDuration = Math.round(duree)
+      }
+    }
   }
 
   if (content === "" && !fileUrl) {
@@ -117,6 +127,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
       fileUrl: fileUrl,
       fileName: fileName,
       fileType: fileType,
+      audioDuration: audioDuration,
       senderId: user.id,
       conversationId: id,
     },

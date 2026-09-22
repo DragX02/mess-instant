@@ -88,6 +88,7 @@ export function MessageList({
                   url={message.fileUrl}
                   name={message.fileName || "fichier"}
                   type={message.fileType || ""}
+                  audioDuration={message.audioDuration}
                 />
               )}
 

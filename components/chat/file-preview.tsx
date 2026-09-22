@@ -1,8 +1,19 @@
 import Image from "next/image"
 import { Download, File } from "lucide-react"
+import { VoiceNote } from "./voice-note"
 
 /** Affiche une pièce jointe selon son type : image, vidéo, audio, ou lien de téléchargement. */
-export function FilePreview({ url, name, type }: { url: string; name: string; type: string }) {
+export function FilePreview({
+  url,
+  name,
+  type,
+  audioDuration,
+}: {
+  url: string
+  name: string
+  type: string
+  audioDuration?: number | null
+}) {
   if (type.startsWith("image/") && type !== "image/svg+xml") {
     return (
       <a href={url} target="_blank" rel="noreferrer" className="mt-2 block w-fit">
@@ -23,6 +34,10 @@ export function FilePreview({ url, name, type }: { url: string; name: string; ty
   }
 
   if (type.startsWith("audio/")) {
+    if (audioDuration) {
+      return <VoiceNote url={url} duration={audioDuration} />
+    }
+
     return <audio src={url} controls className="mt-2 max-w-full" />
   }
 

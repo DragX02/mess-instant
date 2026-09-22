@@ -97,6 +97,7 @@ model Message {
   fileUrl        String?
   fileName       String?
   fileType       String?
+  audioDuration  Int?
   createdAt      DateTime @default(now())
   senderId       String
   conversationId String

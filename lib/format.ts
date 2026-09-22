@@ -9,3 +9,11 @@ export function formatMessageDate(date: string) {
 
   return messageDate.toLocaleDateString("fr-FR") + " à " + time
 }
+
+export function formatDuration(seconds: number) {
+  const total = Math.max(0, Math.round(seconds))
+  const minutes = Math.floor(total / 60)
+  const reste = total % 60
+
+  return minutes + ":" + String(reste).padStart(2, "0")
+}

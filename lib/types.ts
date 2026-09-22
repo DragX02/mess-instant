@@ -39,6 +39,7 @@ export type MessageItem = {
   fileUrl: string | null
   fileName: string | null
   fileType: string | null
+  audioDuration: number | null
   createdAt: string
   sender: { id: string; name: string }
   reactions: ReactionItem[]

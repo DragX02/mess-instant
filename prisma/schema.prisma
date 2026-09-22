@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -17,13 +16,14 @@ model User {
   createdAt DateTime @default(now())
 
   memberships     Membership[]
+  serverMembers   ServerMember[]
   messages        Message[]
   reactions       Reaction[]
-  sentRequests    Friendship[] @relation("requester")
-  receivedRequest Friendship[] @relation("receiver")
+  sentRequests    Friendship[]   @relation("requester")
+  receivedRequest Friendship[]   @relation("receiver")
   sessions        Session[]
-  emailVerified   Boolean      @default(false)
-  updatedAt       DateTime     @updatedAt
+  emailVerified   Boolean        @default(false)
+  updatedAt       DateTime       @updatedAt
   accounts        Account[]
 
   @@map("user")
@@ -36,6 +36,31 @@ enum ConversationType {
   PRIVATE
 }
 
+/// Un serveur est affiché comme une galaxie : son canal INFO est le soleil, ses canaux les planètes.
+model Server {
+  id          String   @id @default(cuid())
+  name        String
+  inviteCode  String   @unique
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  members       ServerMember[]
+  conversations Conversation[]
+}
+
+model ServerMember {
+  id       String   @id @default(cuid())
+  userId   String
+  serverId String
+  role     Role     @default(MEMBER)
+  joinedAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, serverId])
+}
+
 model Conversation {
   id          String           @id @default(cuid())
   type        ConversationType @default(PUBLIC)
@@ -43,9 +68,14 @@ model Conversation {
   accepted    Boolean          @default(true)
   createdById String?
   createdAt   DateTime         @default(now())
+  /// Renseigné pour les canaux INFO et PUBLIC ; null pour les groupes et messages privés.
+  serverId    String?
 
+  server      Server?      @relation(fields: [serverId], references: [id], onDelete: Cascade)
   memberships Membership[]
   messages    Message[]
+
+  @@index([serverId])
 }
 
 model Membership {

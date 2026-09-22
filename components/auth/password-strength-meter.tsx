@@ -5,10 +5,7 @@ interface PasswordStrengthMeterProps {
   visible?: boolean
 }
 
-export function PasswordStrengthMeter({
-  strength,
-  visible = true,
-}: PasswordStrengthMeterProps) {
+export function PasswordStrengthMeter({ strength, visible = true }: PasswordStrengthMeterProps) {
   if (!visible) return null
 
   const colors = {
@@ -29,12 +26,17 @@ export function PasswordStrengthMeter({
     <div className="space-y-2">
       <div className="flex items-center justify-between text-sm">
         <span className="text-muted-foreground">Force du mot de passe</span>
-        <span className={`font-medium ${
-          strength.level === "weak" ? "text-destructive" :
-          strength.level === "fair" ? "text-yellow-500" :
-          strength.level === "good" ? "text-blue-500" :
-          "text-green-500"
-        }`}>
+        <span
+          className={`font-medium ${
+            strength.level === "weak"
+              ? "text-destructive"
+              : strength.level === "fair"
+                ? "text-yellow-500"
+                : strength.level === "good"
+                  ? "text-blue-500"
+                  : "text-green-500"
+          }`}
+        >
           {labels[strength.level]}
         </span>
       </div>
@@ -61,9 +63,7 @@ export function PasswordStrengthMeter({
 
       {/* Success message */}
       {strength.isValid && (
-        <p className="text-xs text-green-500 font-medium">
-          ✓ Mot de passe fort
-        </p>
+        <p className="text-xs text-green-500 font-medium">✓ Mot de passe fort</p>
       )}
     </div>
   )

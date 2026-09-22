@@ -1,11 +1,19 @@
 import { prisma } from "@/lib/prisma"
-import { areFriends, findPrivateConversation, getCurrentUser } from "@/lib/chat"
+import {
+  DEFAULT_SERVER_ID,
+  areFriends,
+  canManageServer,
+  findPrivateConversation,
+  getCurrentUser,
+} from "@/lib/chat"
 
 export async function GET() {
   const user = await getCurrentUser()
 
   if (!user) {
-    const info = await prisma.conversation.findMany({ where: { type: "INFO" } })
+    const info = await prisma.conversation.findMany({
+      where: { type: "INFO", serverId: DEFAULT_SERVER_ID },
+    })
     const result = info.map((conversation) => ({
       id: conversation.id,
       type: conversation.type,
@@ -13,13 +21,19 @@ export async function GET() {
       accepted: true,
       createdById: null,
       memberCount: 0,
+      serverId: conversation.serverId,
     }))
     return Response.json(result)
   }
 
   const conversations = await prisma.conversation.findMany({
     where: {
-      OR: [{ type: "INFO" }, { type: "PUBLIC" }, { memberships: { some: { userId: user.id } } }],
+      OR: [
+        // Les canaux des serveurs dont l'utilisateur est membre…
+        { server: { members: { some: { userId: user.id } } } },
+        // … et ses groupes et messages privés.
+        { memberships: { some: { userId: user.id } } },
+      ],
     },
     include: {
       memberships: { include: { user: { select: { id: true, name: true, email: true } } } },
@@ -42,6 +56,7 @@ export async function GET() {
       accepted: conversation.accepted,
       createdById: conversation.createdById,
       memberCount: conversation.memberships.length,
+      serverId: conversation.serverId,
     }
   })
 
@@ -59,15 +74,21 @@ export async function POST(request: Request) {
   const name = typeof body.name === "string" ? body.name.trim() : ""
 
   if (body.type === "PUBLIC") {
-    if (!user.isAdmin) {
-      return Response.json({ error: "Seul un admin peut créer un canal." }, { status: 403 })
+    const serverId = typeof body.serverId === "string" ? body.serverId : DEFAULT_SERVER_ID
+    const server = await prisma.server.findUnique({ where: { id: serverId } })
+
+    if (!server || !(await canManageServer(user, serverId))) {
+      return Response.json(
+        { error: "Seuls les admins du serveur peuvent créer un canal." },
+        { status: 403 },
+      )
     }
     if (name === "") {
       return Response.json({ error: "Le nom est obligatoire." }, { status: 400 })
     }
 
     const channel = await prisma.conversation.create({
-      data: { type: "PUBLIC", name: name, createdById: user.id },
+      data: { type: "PUBLIC", name: name, createdById: user.id, serverId },
     })
     return Response.json({ id: channel.id })
   }

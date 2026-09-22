@@ -9,7 +9,13 @@ interface LogoProps {
   full?: boolean
 }
 
-export function Logo({ href = "/", size = "md", className = "", withText = false, full = false }: LogoProps) {
+export function Logo({
+  href = "/",
+  size = "md",
+  className = "",
+  withText = false,
+  full = false,
+}: LogoProps) {
   const iconSizes = {
     sm: { width: 24, height: 24 },
     md: { width: 40, height: 40 },

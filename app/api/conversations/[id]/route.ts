@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma"
-import { getCurrentUser, isMember } from "@/lib/chat"
+import { canManageServer, getCurrentUser, isMember } from "@/lib/chat"
 
 export async function PATCH(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
@@ -38,7 +38,10 @@ export async function DELETE(request: Request, ctx: { params: Promise<{ id: stri
   }
 
   if (conversation.type === "PUBLIC") {
-    if (!user.isAdmin || conversation.id === "general") {
+    const canManage = conversation.serverId
+      ? await canManageServer(user, conversation.serverId)
+      : user.isAdmin
+    if (!canManage || conversation.id === "general") {
       return Response.json({ error: "Action impossible." }, { status: 403 })
     }
     await prisma.conversation.delete({ where: { id } })

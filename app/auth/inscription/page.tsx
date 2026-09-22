@@ -8,6 +8,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Logo } from "@/components/logo"
+import { PasswordInput, PasswordStrengthMeter } from "@/components/auth"
+import { validatePasswordStrength, type PasswordStrength } from "@/lib/password-validator"
+import { translateError } from "@/lib/error-messages"
+import { GoogleIcon } from "@/components/google-icon"
 
 export default function InscriptionPage() {
   const router = useRouter()
@@ -17,10 +22,27 @@ export default function InscriptionPage() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
+  const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
+    score: 0,
+    level: "weak",
+    feedback: [],
+    isValid: false,
+  })
+
+  const handlePasswordChange = (value: string) => {
+    setPassword(value)
+    setPasswordStrength(validatePasswordStrength(value))
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(null)
+
+    if (!passwordStrength.isValid) {
+      setError("Le mot de passe n'est pas assez fort. Veuillez respecter les critères.")
+      return
+    }
 
     if (password !== confirmPassword) {
       setError("Les mots de passe ne correspondent pas.")
@@ -39,21 +61,27 @@ export default function InscriptionPage() {
     setLoading(false)
 
     if (signUpError) {
-      setError(signUpError.message ?? "Une erreur est survenue lors de l'inscription.")
+      setError(translateError(signUpError.message))
       return
     }
 
     router.push("/dashboard")
   }
 
+  async function handleGoogleSignUp() {
+    setGoogleLoading(true)
+    await authClient.signUp.social({
+      provider: "google",
+      callbackURL: "/dashboard",
+    })
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background text-foreground px-4 py-16">
       <Card className="w-full max-w-md rounded-[var(--radius)]">
-        <CardHeader>
-          <Link href="/" className="text-xl font-bold font-sans text-primary">
-            Helix
-          </Link>
-          <CardTitle className="text-2xl mt-4">Créer un compte</CardTitle>
+        <CardHeader className="flex flex-col items-center pt-8">
+          <Logo href="/" full className="mb-6" />
+          <CardTitle className="text-2xl">Créer un compte</CardTitle>
           <CardDescription>Rejoignez votre équipe sur Helix en quelques secondes.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -84,24 +112,23 @@ export default function InscriptionPage() {
               />
             </div>
 
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="password">Mot de passe</Label>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
                 autoComplete="new-password"
                 required
                 minLength={8}
                 value={password}
-                onChange={(event) => setPassword(event.target.value)}
+                onChange={(event) => handlePasswordChange(event.target.value)}
               />
+              <PasswordStrengthMeter strength={passwordStrength} />
             </div>
 
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="confirm-password">Confirmer le mot de passe</Label>
-              <Input
+              <PasswordInput
                 id="confirm-password"
-                type="password"
                 autoComplete="new-password"
                 required
                 minLength={8}
@@ -121,6 +148,23 @@ export default function InscriptionPage() {
 
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? "Création du compte..." : "Créer mon compte"}
+            </Button>
+
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-border" />
+              <span className="text-xs text-muted-foreground">ou</span>
+              <div className="h-px flex-1 bg-border" />
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              disabled={googleLoading}
+              onClick={handleGoogleSignUp}
+              className="w-full"
+            >
+              <GoogleIcon className="h-4 w-4 mr-2" />
+              {googleLoading ? "Inscription..." : "Google"}
             </Button>
           </form>
 

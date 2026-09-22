@@ -1,0 +1,18 @@
+{
+  "name": "Helix - Messagerie B2B",
+  "short_name": "Helix",
+  "description": "Plateforme de messagerie temps réel pour équipes B2B",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#FF6B35",
+  "background_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

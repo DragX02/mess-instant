@@ -4,6 +4,7 @@ import Link from "next/link"
 import { ChatPreview } from "@/components/chat-preview"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
+import { Logo } from "@/components/logo"
 
 export default function Home() {
   return (
@@ -11,7 +12,7 @@ export default function Home() {
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="text-2xl font-bold font-sans text-primary">Helix</div>
+          <Logo href="/" size="sm" withText />
 
           <div className="flex items-center gap-3">
             <ThemeToggle />

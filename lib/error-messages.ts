@@ -22,6 +22,13 @@ const errorTranslations: Record<string, string> = {
   "Verification email already sent": "Un email de vérification a déjà été envoyé",
   "Email verification failed": "La vérification de l'email a échoué",
 
+  // OAuth
+  "access_denied": "Vous avez refusé d'autoriser Helix. Veuillez réessayer et accepter les permissions demandées.",
+  "invalid_request": "Requête d'authentification invalide",
+  "server_error": "Une erreur serveur s'est produite lors de l'authentification",
+  "temporarily_unavailable": "Le service d'authentification est temporairement indisponible",
+  "account_not_found": "Aucun compte n'est associé à cet identifiant Google. Veuillez d'abord créer un compte via l'inscription.",
+
   // Général
   "An error occurred": "Une erreur est survenue",
   "Something went wrong": "Quelque chose s'est mal passé",

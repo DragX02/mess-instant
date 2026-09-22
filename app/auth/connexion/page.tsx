@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Logo } from "@/components/logo"
 import { PasswordInput } from "@/components/auth"
 import { translateError } from "@/lib/error-messages"
+import { GoogleIcon } from "@/components/google-icon"
 
 export default function ConnexionPage() {
   const router = useRouter()
@@ -18,6 +19,7 @@ export default function ConnexionPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -38,6 +40,14 @@ export default function ConnexionPage() {
     }
 
     router.push("/dashboard")
+  }
+
+  async function handleGoogleSignIn() {
+    setGoogleLoading(true)
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/dashboard",
+    })
   }
 
   return (
@@ -93,6 +103,23 @@ export default function ConnexionPage() {
 
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? "Connexion..." : "Se connecter"}
+            </Button>
+
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-border" />
+              <span className="text-xs text-muted-foreground">ou</span>
+              <div className="h-px flex-1 bg-border" />
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              disabled={googleLoading}
+              onClick={handleGoogleSignIn}
+              className="w-full"
+            >
+              <GoogleIcon className="h-4 w-4 mr-2" />
+              {googleLoading ? "Connexion..." : "Google"}
             </Button>
           </form>
 

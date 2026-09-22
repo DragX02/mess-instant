@@ -12,6 +12,7 @@ import { Logo } from "@/components/logo"
 import { PasswordInput, PasswordStrengthMeter } from "@/components/auth"
 import { validatePasswordStrength, type PasswordStrength } from "@/lib/password-validator"
 import { translateError } from "@/lib/error-messages"
+import { GoogleIcon } from "@/components/google-icon"
 
 export default function InscriptionPage() {
   const router = useRouter()
@@ -21,6 +22,7 @@ export default function InscriptionPage() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
   const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
     score: 0,
     level: "weak",
@@ -64,6 +66,14 @@ export default function InscriptionPage() {
     }
 
     router.push("/dashboard")
+  }
+
+  async function handleGoogleSignUp() {
+    setGoogleLoading(true)
+    await authClient.signUp.social({
+      provider: "google",
+      callbackURL: "/dashboard",
+    })
   }
 
   return (
@@ -138,6 +148,23 @@ export default function InscriptionPage() {
 
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? "Création du compte..." : "Créer mon compte"}
+            </Button>
+
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-border" />
+              <span className="text-xs text-muted-foreground">ou</span>
+              <div className="h-px flex-1 bg-border" />
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              disabled={googleLoading}
+              onClick={handleGoogleSignUp}
+              className="w-full"
+            >
+              <GoogleIcon className="h-4 w-4 mr-2" />
+              {googleLoading ? "Inscription..." : "Google"}
             </Button>
           </form>
 

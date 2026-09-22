@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
+import { PasswordInput } from "@/components/password-input"
 
 export default function ConnexionPage() {
   const router = useRouter()
@@ -71,9 +72,8 @@ export default function ConnexionPage() {
                   Mot de passe oublié ?
                 </Link>
               </div>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
                 autoComplete="current-password"
                 required
                 value={password}

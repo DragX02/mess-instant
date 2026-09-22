@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
+import { PasswordInput } from "@/components/password-input"
 
 export default function InscriptionPage() {
   const router = useRouter()
@@ -85,9 +86,8 @@ export default function InscriptionPage() {
 
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="password">Mot de passe</Label>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
                 autoComplete="new-password"
                 required
                 minLength={8}
@@ -98,9 +98,8 @@ export default function InscriptionPage() {
 
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="confirm-password">Confirmer le mot de passe</Label>
-              <Input
+              <PasswordInput
                 id="confirm-password"
-                type="password"
                 autoComplete="new-password"
                 required
                 minLength={8}

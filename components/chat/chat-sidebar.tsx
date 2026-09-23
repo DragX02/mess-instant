@@ -1,16 +1,16 @@
 "use client"
 
 import Link from "next/link"
-import { LogIn, LogOut, MessageCircle, Orbit, UserPlus } from "lucide-react"
+import { LogIn, MessageCircle, Orbit, UserPlus } from "lucide-react"
 import { cn } from "cn"
 import { PERSONAL_GALAXY, conversationsIn } from "@/lib/galaxies"
 import type { ConversationItem, ConversationType, CurrentUser, ServerItem } from "@/lib/types"
+import type { UiTheme } from "@/hooks/use-ui-theme"
 import { Button } from "@/components/ui/button"
-import { IconButton } from "@/components/ui/icon-button"
 import { SidebarButton, SidebarEmpty, SidebarSection } from "@/components/ui/sidebar-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { ConversationIcon } from "./conversation-icon"
-import { UserStar } from "./space/user-star"
+import { UserMenu } from "./user-menu"
 
 export function ChatSidebar({
   user,
@@ -20,6 +20,7 @@ export function ChatSidebar({
   selectedId,
   showFriends,
   open,
+  theme,
   friendRequestCount,
   onClose,
   onSelect,
@@ -30,6 +31,7 @@ export function ChatSidebar({
   onCreateChannel,
   onNewGroup,
   onNewPrivate,
+  onOpenSettings,
   onSignOut,
 }: {
   user: CurrentUser | null
@@ -40,6 +42,7 @@ export function ChatSidebar({
   selectedId: string
   showFriends: boolean
   open: boolean
+  theme: UiTheme
   friendRequestCount: number
   onClose: () => void
   onSelect: (id: string) => void
@@ -50,6 +53,7 @@ export function ChatSidebar({
   onCreateChannel: () => void
   onNewGroup: () => void
   onNewPrivate: () => void
+  onOpenSettings: () => void
   onSignOut: () => void
 }) {
   function list(...types: ConversationType[]) {
@@ -119,7 +123,10 @@ export function ChatSidebar({
             />
           )}
 
-          <SidebarSection title="Galaxies" onAdd={user ? onCreateServer : undefined} />
+          <SidebarSection
+            title={theme === "univers" ? "Galaxies" : "Serveurs"}
+            onAdd={user ? onCreateServer : undefined}
+          />
           {servers.map((item) =>
             galaxyEntry(item.id, item.name, <Orbit className="h-4 w-4 shrink-0" />),
           )}
@@ -167,16 +174,7 @@ export function ChatSidebar({
 
         <div className="border-t border-border p-3">
           {user ? (
-            <div className="flex items-center gap-2">
-              <UserStar name={user.name} size={28} showName={false} />
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">{user.name}</p>
-                {user.isAdmin && <p className="text-[11px] text-primary">Admin</p>}
-              </div>
-              <IconButton label="Se déconnecter" onClick={onSignOut} className="p-2">
-                <LogOut className="h-4 w-4" />
-              </IconButton>
-            </div>
+            <UserMenu user={user} onOpenSettings={onOpenSettings} onSignOut={onSignOut} />
           ) : (
             <div className="flex flex-col gap-2">
               <Button nativeButton={false} render={<Link href="/auth/connexion" />}>

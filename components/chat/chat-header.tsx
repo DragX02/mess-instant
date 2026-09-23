@@ -2,6 +2,7 @@
 
 import { ChevronRight, LogOut, Menu, Plus, Trash2, UserPlus, Users } from "lucide-react"
 import type { ConversationItem, ServerItem } from "@/lib/types"
+import type { UiTheme } from "@/hooks/use-ui-theme"
 import { DEFAULT_SERVER_ID } from "@/lib/galaxies"
 import { Button } from "@/components/ui/button"
 import { IconButton } from "@/components/ui/icon-button"
@@ -16,6 +17,7 @@ export function ChatHeader({
   galaxyName,
   server,
   conversation,
+  theme,
   onOpenSidebar,
   onUniverse,
   onGalaxy,
@@ -32,6 +34,7 @@ export function ChatHeader({
   server: ServerItem | undefined
   /** La planète ouverte, s'il y en a une. */
   conversation: ConversationItem | undefined
+  theme: UiTheme
   onOpenSidebar: () => void
   onUniverse: () => void
   onGalaxy: () => void
@@ -51,6 +54,7 @@ export function ChatHeader({
     conversation.id !== "general" &&
     Boolean(server?.canManage)
   const serverActions = inGalaxy && server?.role != null
+  const homeLabel = theme === "univers" ? "Univers" : "Serveurs"
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border px-4">
@@ -63,14 +67,14 @@ export function ChatHeader({
       ) : (
         <nav aria-label="Fil d'Ariane" className="flex min-w-0 items-center gap-1">
           {galaxyName === null ? (
-            <h1 className="truncate font-semibold">Univers</h1>
+            <h1 className="truncate font-semibold">{homeLabel}</h1>
           ) : (
             <>
               <button
                 onClick={onUniverse}
                 className="hidden shrink-0 text-sm text-muted-foreground hover:text-foreground sm:block"
               >
-                Univers
+                {homeLabel}
               </button>
               <ChevronRight className="hidden h-4 w-4 shrink-0 text-muted-foreground sm:block" />
               {conversation ? (

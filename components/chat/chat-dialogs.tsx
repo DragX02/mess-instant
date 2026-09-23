@@ -1,19 +1,30 @@
 "use client"
 
 import type { ConversationItem, Friend, ServerItem } from "@/lib/types"
+import type { UiTheme } from "@/hooks/use-ui-theme"
 import { GroupMembersDialog } from "./group-members-dialog"
 import { NewGroupDialog } from "./new-group-dialog"
 import { NewPrivateDialog } from "./new-private-dialog"
 import { InviteDialog, ServerDialog } from "./server-dialogs"
+import { SettingsDialog } from "./settings-dialog"
 
 export type DialogName =
-  "" | "groupe" | "mp" | "membres" | "serveur-creer" | "serveur-rejoindre" | "inviter"
+  | ""
+  | "groupe"
+  | "mp"
+  | "membres"
+  | "serveur-creer"
+  | "serveur-rejoindre"
+  | "inviter"
+  | "parametres"
 
 export function ChatDialogs({
   dialog,
   friends,
   conversation,
   server,
+  theme,
+  onApplyTheme,
   onClose,
   onCreated,
   onServerReady,
@@ -23,12 +34,18 @@ export function ChatDialogs({
   friends: Friend[]
   conversation: ConversationItem | undefined
   server: ServerItem | undefined
+  theme: UiTheme
+  onApplyTheme: (theme: UiTheme) => void
   onClose: () => void
   onCreated: (id: string) => void
   /** Serveur créé ou rejoint : on entre dans sa galaxie. */
   onServerReady: (serverId: string) => void
   onChange: () => void
 }) {
+  if (dialog === "parametres") {
+    return <SettingsDialog current={theme} onApply={onApplyTheme} onClose={onClose} />
+  }
+
   if (dialog === "groupe") {
     return <NewGroupDialog friends={friends} onClose={onClose} onCreated={onCreated} />
   }

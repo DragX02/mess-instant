@@ -6,6 +6,7 @@ import { api, apiSend } from "@/lib/api"
 import { authClient } from "@/lib/auth-client"
 import { PERSONAL_GALAXY, galaxyOf } from "@/lib/galaxies"
 import { usePolling } from "@/hooks/use-polling"
+import { useUiTheme } from "@/hooks/use-ui-theme"
 import type {
   ConversationItem,
   CurrentUser,
@@ -17,6 +18,7 @@ import type {
 import { ChatDialogs, type DialogName } from "./chat-dialogs"
 import { ChatHeader } from "./chat-header"
 import { ChatSidebar } from "./chat-sidebar"
+import { ClassicView } from "./classic-view"
 import { ConversationView } from "./conversation-view"
 import { FriendsPanel } from "./friends-panel"
 import type { GalaxyStar } from "./space/galaxy"
@@ -25,6 +27,7 @@ const NO_FRIENDS: FriendsData = { friends: [], received: [], sent: [] }
 
 export function ChatApp({ user }: { user: CurrentUser | null }) {
   const router = useRouter()
+  const { theme, apply } = useUiTheme()
   const [servers, setServers] = useState<ServerItem[]>([])
   const [conversations, setConversations] = useState<ConversationItem[]>([])
   // Navigation : univers (galaxyId null) › galaxie › planète ouverte.
@@ -258,6 +261,7 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
         selectedId={planetOpen ? selectedId : ""}
         showFriends={showFriends}
         open={showSidebar}
+        theme={theme}
         friendRequestCount={friendsData.received.length}
         onClose={() => setShowSidebar(false)}
         onSelect={(id) => selectConversation(id)}
@@ -271,6 +275,7 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
         onCreateChannel={createChannel}
         onNewGroup={() => setDialog("groupe")}
         onNewPrivate={() => setDialog("mp")}
+        onOpenSettings={() => setDialog("parametres")}
         onSignOut={handleSignOut}
       />
 
@@ -280,6 +285,7 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
           galaxyName={galaxyName}
           server={server}
           conversation={selected}
+          theme={theme}
           onOpenSidebar={() => setShowSidebar(true)}
           onUniverse={toUniverse}
           onGalaxy={() => galaxyId && enterGalaxy(galaxyId)}
@@ -295,6 +301,19 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
             data={friendsData}
             onChange={reload}
             onMessage={(userId) => openConversation({ type: "PRIVATE", userId })}
+          />
+        ) : theme === "classique" ? (
+          <ClassicView
+            user={user}
+            conversation={selected}
+            conversationId={selectedId}
+            open={planetOpen}
+            messages={messages}
+            canWrite={canWrite}
+            canModerate={Boolean(user?.isAdmin || server?.canManage)}
+            onChange={reload}
+            onAccept={acceptRequest}
+            onDelete={deleteConversation}
           />
         ) : (
           <ConversationView
@@ -325,6 +344,8 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
         friends={friendsData.friends}
         conversation={selected}
         server={server}
+        theme={theme}
+        onApplyTheme={apply}
         onClose={() => setDialog("")}
         onCreated={(id) => {
           selectConversation(id, PERSONAL_GALAXY)

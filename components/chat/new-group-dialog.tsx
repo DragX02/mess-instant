@@ -4,8 +4,8 @@ import { useState, type SubmitEvent } from "react"
 import { api } from "@/lib/api"
 import type { Friend } from "@/lib/types"
 import { Button } from "@/components/ui/button"
+import { Field } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Modal } from "@/components/ui/modal"
 
 export function NewGroupDialog({
@@ -46,8 +46,7 @@ export function NewGroupDialog({
   return (
     <Modal title="Nouveau groupe" onClose={onClose}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="group-name">Nom du groupe</Label>
+        <Field label="Nom du groupe" htmlFor="group-name">
           <Input
             id="group-name"
             required
@@ -55,10 +54,9 @@ export function NewGroupDialog({
             onChange={(event) => setName(event.target.value)}
             placeholder="Les copains"
           />
-        </div>
+        </Field>
 
-        <div className="flex flex-col gap-1.5">
-          <Label>Ajouter des amis</Label>
+        <Field label="Ajouter des amis">
           {friends.length === 0 && (
             <p className="text-sm text-muted-foreground">
               Vous n&apos;avez pas encore d&apos;amis. Vous pourrez en ajouter plus tard.
@@ -79,7 +77,7 @@ export function NewGroupDialog({
               </label>
             ))}
           </div>
-        </div>
+        </Field>
 
         {error && <p className="text-sm text-destructive">{error}</p>}
 

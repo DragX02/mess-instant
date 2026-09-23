@@ -11,10 +11,6 @@ import {
   type Camera,
 } from "./use-camera"
 
-/**
- * Zone de l'espace où l'on peut zoomer (molette, pincement, boutons) et se déplacer (glisser).
- * Le contenu est positionné en unités de conteneur (cqw / cqh) de la scène parente.
- */
 export function SpaceViewport({
   camera,
   onCameraChange,
@@ -29,7 +25,6 @@ export function SpaceViewport({
   const viewportRef = useRef<HTMLDivElement>(null)
   const cameraHandlers = useCamera(viewportRef, onCameraChange)
 
-  /** Boutons + et − : zoom autour du centre de l'écran. */
   function zoomBy(factor: number) {
     const rect = viewportRef.current?.getBoundingClientRect()
     if (rect) {

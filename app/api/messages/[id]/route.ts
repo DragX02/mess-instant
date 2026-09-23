@@ -2,13 +2,14 @@ import { unlink } from "fs/promises"
 import path from "path"
 import { prisma } from "@/lib/prisma"
 import { canManageServer, getCurrentUser } from "@/lib/chat"
+import { erreur, nonConnecte, ok } from "@/lib/reponses"
 
 export async function DELETE(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
   const user = await getCurrentUser()
 
   if (!user) {
-    return Response.json({ error: "Vous devez être connecté." }, { status: 401 })
+    return nonConnecte()
   }
 
   const message = await prisma.message.findUnique({
@@ -17,15 +18,14 @@ export async function DELETE(request: Request, ctx: { params: Promise<{ id: stri
   })
 
   if (!message) {
-    return Response.json({ error: "Message introuvable." }, { status: 404 })
+    return erreur("Message introuvable.", 404)
   }
 
-  // Les admins d'un serveur peuvent modérer les messages de ses canaux.
   const serverId = message.conversation.serverId
   const moderator = serverId ? await canManageServer(user, serverId) : user.isAdmin
 
   if (message.senderId !== user.id && !moderator) {
-    return Response.json({ error: "Vous ne pouvez supprimer que vos messages." }, { status: 403 })
+    return erreur("Vous ne pouvez supprimer que vos messages.", 403)
   }
 
   await prisma.message.delete({ where: { id } })
@@ -37,5 +37,5 @@ export async function DELETE(request: Request, ctx: { params: Promise<{ id: stri
     } catch {}
   }
 
-  return Response.json({ ok: true })
+  return ok()
 }

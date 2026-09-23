@@ -1,16 +1,14 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
-import { SmilePlus, Trash2 } from "lucide-react"
-import { cn } from "cn"
-import { api, apiSend } from "@/lib/api"
+import { useEffect, useRef } from "react"
 import { QUICK_REACTIONS } from "@/lib/emojis"
 import { formatMessageDate } from "@/lib/format"
 import type { CurrentUser, MessageItem } from "@/lib/types"
+import { useMessageActions } from "@/hooks/use-message-actions"
 import { Avatar } from "@/components/ui/avatar"
-import { IconButton } from "@/components/ui/icon-button"
 import { EmojiPicker } from "./emoji-picker"
 import { FilePreview } from "./file-preview"
+import { MessageTools, ReactionList } from "./message-tools"
 
 export function ClassicMessageList({
   messages,
@@ -24,25 +22,11 @@ export function ClassicMessageList({
   onChange: () => void
 }) {
   const bottomRef = useRef<HTMLDivElement>(null)
-  const [reactionMenu, setReactionMenu] = useState("")
+  const actions = useMessageActions(onChange)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView()
   }, [messages.length])
-
-  async function react(messageId: string, emoji: string) {
-    setReactionMenu("")
-    await api("/api/messages/" + messageId + "/reactions", { method: "POST", body: { emoji } })
-    onChange()
-  }
-
-  async function remove(messageId: string) {
-    if (!confirm("Supprimer ce message ?")) {
-      return
-    }
-    await apiSend("/api/messages/" + messageId, "DELETE")
-    onChange()
-  }
 
   if (messages.length === 0) {
     return (
@@ -85,55 +69,30 @@ export function ClassicMessageList({
               />
             )}
 
-            {message.reactions.length > 0 && (
-              <div className="mt-1 flex flex-wrap gap-1">
-                {message.reactions.map((reaction) => (
-                  <button
-                    key={reaction.emoji}
-                    disabled={!user}
-                    onClick={() => react(message.id, reaction.emoji)}
-                    className={cn(
-                      "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs",
-                      reaction.mine
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border bg-muted/60",
-                    )}
-                  >
-                    {reaction.emoji} {reaction.count}
-                  </button>
-                ))}
-              </div>
-            )}
+            <ReactionList
+              reactions={message.reactions}
+              disabled={!user}
+              tone="clair"
+              onReact={(emoji) => actions.react(message.id, emoji)}
+            />
 
-            {reactionMenu === message.id && (
+            {actions.reactionMenu === message.id && (
               <EmojiPicker
                 variant="row"
                 emojis={QUICK_REACTIONS}
-                onSelect={(emoji) => react(message.id, emoji)}
+                onSelect={(emoji) => actions.react(message.id, emoji)}
                 className="mt-1 shadow"
               />
             )}
           </div>
 
           {user && (
-            <div className="absolute -top-3 right-2 flex gap-1 rounded-md border border-border bg-card p-0.5 shadow-sm sm:opacity-0 sm:group-hover:opacity-100 sm:focus-within:opacity-100">
-              <IconButton
-                label="Réagir"
-                onClick={() => setReactionMenu(reactionMenu === message.id ? "" : message.id)}
-                className="rounded"
-              >
-                <SmilePlus className="h-4 w-4" />
-              </IconButton>
-              {(message.sender.id === user.id || canModerate) && (
-                <IconButton
-                  label="Supprimer le message"
-                  onClick={() => remove(message.id)}
-                  className="rounded hover:text-destructive"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </IconButton>
-              )}
-            </div>
+            <MessageTools
+              className="right-2"
+              canDelete={message.sender.id === user.id || canModerate}
+              onReact={() => actions.toggleMenu(message.id)}
+              onRemove={() => actions.remove(message.id)}
+            />
           )}
         </div>
       ))}

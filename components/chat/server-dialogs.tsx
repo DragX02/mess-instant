@@ -5,11 +5,10 @@ import { Check, Copy } from "lucide-react"
 import { api } from "@/lib/api"
 import type { ServerItem } from "@/lib/types"
 import { Button } from "@/components/ui/button"
+import { Field } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Modal } from "@/components/ui/modal"
 
-/** Création d'un serveur (nom) ou adhésion à un serveur (code d'invitation). */
 export function ServerDialog({
   mode,
   onClose,
@@ -48,8 +47,7 @@ export function ServerDialog({
             : "Entrez le code d'invitation que vous a donné un membre du serveur."}
         </p>
 
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="server-value">{creating ? "Nom du serveur" : "Code d'invitation"}</Label>
+        <Field label={creating ? "Nom du serveur" : "Code d'invitation"} htmlFor="server-value">
           <Input
             id="server-value"
             required
@@ -59,7 +57,7 @@ export function ServerDialog({
             onChange={(event) => setValue(event.target.value)}
             placeholder={creating ? "Club d'astronomie" : "K7P2QX9M"}
           />
-        </div>
+        </Field>
 
         {error && <p className="text-sm text-destructive">{error}</p>}
 
@@ -69,7 +67,6 @@ export function ServerDialog({
   )
 }
 
-/** Affiche le code d'invitation du serveur, à copier et partager. */
 export function InviteDialog({ server, onClose }: { server: ServerItem; onClose: () => void }) {
   const [copied, setCopied] = useState(false)
 
@@ -77,9 +74,7 @@ export function InviteDialog({ server, onClose }: { server: ServerItem; onClose:
     try {
       await navigator.clipboard.writeText(server.inviteCode)
       setCopied(true)
-    } catch {
-      // Presse-papiers indisponible : le code reste sélectionnable à la main.
-    }
+    } catch {}
   }
 
   return (

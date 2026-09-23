@@ -1,12 +1,12 @@
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/chat"
+import { erreur, nonConnecte } from "@/lib/reponses"
 
-/** Rejoint un serveur à partir de son code d'invitation. */
 export async function POST(request: Request) {
   const user = await getCurrentUser()
 
   if (!user) {
-    return Response.json({ error: "Vous devez être connecté." }, { status: 401 })
+    return nonConnecte()
   }
 
   const body = await request.json()
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     : null
 
   if (!server) {
-    return Response.json({ error: "Code d'invitation invalide." }, { status: 404 })
+    return erreur("Code d'invitation invalide.", 404)
   }
 
   await prisma.serverMember.upsert({

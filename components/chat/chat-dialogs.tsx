@@ -38,7 +38,6 @@ export function ChatDialogs({
   onApplyTheme: (theme: UiTheme) => void
   onClose: () => void
   onCreated: (id: string) => void
-  /** Serveur créé ou rejoint : on entre dans sa galaxie. */
   onServerReady: (serverId: string) => void
   onChange: () => void
 }) {

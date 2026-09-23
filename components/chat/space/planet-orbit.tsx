@@ -3,10 +3,8 @@
 import type { ConversationItem } from "@/lib/types"
 import { planetStyle, sunStyle } from "./planet-style"
 
-/** Ouverture maximale (en degrés) des arcs gauche et droit où sont placées les petites planètes. */
 const MAX_SPREAD = 50
 
-/** Position d'une planète : moitié à droite, moitié à gauche, en éventail sur une ellipse. */
 function position(index: number, count: number) {
   const onRight = index % 2 === 0
   const sideIndex = Math.floor(index / 2)
@@ -20,7 +18,6 @@ function position(index: number, count: number) {
   return { left: `calc(50% + ${x.toFixed(2)}cqw)`, top: `calc(50% + ${y.toFixed(2)}cqh)` }
 }
 
-/** Les autres conversations, en petites planètes flottant autour de la planète ouverte. */
 export function PlanetOrbit({
   conversations,
   onSelect,

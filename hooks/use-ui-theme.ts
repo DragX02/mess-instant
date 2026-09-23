@@ -29,10 +29,6 @@ function defaultTheme(): UiTheme {
   return "classique"
 }
 
-/**
- * Thème d'interface choisi dans les paramètres, retenu dans ce navigateur.
- * Le serveur rend toujours le thème classique : le thème installé s'applique après hydratation.
- */
 export function useUiTheme() {
   const theme = useSyncExternalStore(subscribe, readTheme, defaultTheme)
 

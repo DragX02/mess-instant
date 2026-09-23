@@ -32,8 +32,6 @@ export const auth = betterAuth({
   },
   account: {
     accountLinking: {
-      // Une connexion Google sur une adresse déjà inscrite rattache le compte
-      // social à l'utilisateur existant au lieu de créer un doublon.
       enabled: true,
     },
   },

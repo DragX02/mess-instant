@@ -1,12 +1,13 @@
 import { prisma } from "@/lib/prisma"
 import { canRead, getCurrentUser } from "@/lib/chat"
+import { erreur, nonConnecte, ok } from "@/lib/reponses"
 
 export async function POST(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
   const user = await getCurrentUser()
 
   if (!user) {
-    return Response.json({ error: "Vous devez être connecté." }, { status: 401 })
+    return nonConnecte()
   }
 
   const message = await prisma.message.findUnique({
@@ -15,14 +16,14 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
   })
 
   if (!message || !(await canRead(message.conversation, user))) {
-    return Response.json({ error: "Message introuvable." }, { status: 404 })
+    return erreur("Message introuvable.", 404)
   }
 
   const body = await request.json()
   const emoji = typeof body.emoji === "string" ? body.emoji : ""
 
   if (emoji === "" || emoji.length > 16) {
-    return Response.json({ error: "Emoji invalide." }, { status: 400 })
+    return erreur("Emoji invalide.", 400)
   }
 
   const existing = await prisma.reaction.findUnique({
@@ -35,5 +36,5 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
     await prisma.reaction.create({ data: { userId: user.id, messageId: id, emoji: emoji } })
   }
 
-  return Response.json({ ok: true })
+  return ok()
 }

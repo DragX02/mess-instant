@@ -1,11 +1,14 @@
 import { prisma } from "@/lib/prisma"
 import {
+  CHAMPS_UTILISATEUR,
   DEFAULT_SERVER_ID,
   areFriends,
   canManageServer,
   findPrivateConversation,
   getCurrentUser,
+  nomAffiche,
 } from "@/lib/chat"
+import { erreur, nonConnecte } from "@/lib/reponses"
 
 export async function GET() {
   const user = await getCurrentUser()
@@ -29,14 +32,12 @@ export async function GET() {
   const conversations = await prisma.conversation.findMany({
     where: {
       OR: [
-        // Les canaux des serveurs dont l'utilisateur est membre…
         { server: { members: { some: { userId: user.id } } } },
-        // … et ses groupes et messages privés.
         { memberships: { some: { userId: user.id } } },
       ],
     },
     include: {
-      memberships: { include: { user: { select: { id: true, name: true, email: true } } } },
+      memberships: { include: { user: { select: CHAMPS_UTILISATEUR } } },
     },
     orderBy: { createdAt: "asc" },
   })
@@ -46,7 +47,7 @@ export async function GET() {
 
     if (conversation.type === "PRIVATE") {
       const other = conversation.memberships.find((membership) => membership.userId !== user.id)
-      name = other ? other.user.name || other.user.email : "Conversation"
+      name = other ? nomAffiche(other.user) : "Conversation"
     }
 
     return {
@@ -67,7 +68,7 @@ export async function POST(request: Request) {
   const user = await getCurrentUser()
 
   if (!user) {
-    return Response.json({ error: "Vous devez être connecté." }, { status: 401 })
+    return nonConnecte()
   }
 
   const body = await request.json()
@@ -78,13 +79,10 @@ export async function POST(request: Request) {
     const server = await prisma.server.findUnique({ where: { id: serverId } })
 
     if (!server || !(await canManageServer(user, serverId))) {
-      return Response.json(
-        { error: "Seuls les admins du serveur peuvent créer un canal." },
-        { status: 403 },
-      )
+      return erreur("Seuls les admins du serveur peuvent créer un canal.", 403)
     }
     if (name === "") {
-      return Response.json({ error: "Le nom est obligatoire." }, { status: 400 })
+      return erreur("Le nom est obligatoire.", 400)
     }
 
     const channel = await prisma.conversation.create({
@@ -95,7 +93,7 @@ export async function POST(request: Request) {
 
   if (body.type === "GROUP") {
     if (name === "") {
-      return Response.json({ error: "Le nom du groupe est obligatoire." }, { status: 400 })
+      return erreur("Le nom du groupe est obligatoire.", 400)
     }
 
     const memberIds: string[] = Array.isArray(body.memberIds) ? body.memberIds : []
@@ -133,13 +131,10 @@ export async function POST(request: Request) {
     }
 
     if (!target) {
-      return Response.json({ error: "Utilisateur introuvable." }, { status: 404 })
+      return erreur("Utilisateur introuvable.", 404)
     }
     if (target.id === user.id) {
-      return Response.json(
-        { error: "Vous ne pouvez pas vous écrire à vous-même." },
-        { status: 400 },
-      )
+      return erreur("Vous ne pouvez pas vous écrire à vous-même.", 400)
     }
 
     const existing = await findPrivateConversation(user.id, target.id)
@@ -160,5 +155,5 @@ export async function POST(request: Request) {
     return Response.json({ id: conversation.id })
   }
 
-  return Response.json({ error: "Type de conversation inconnu." }, { status: 400 })
+  return erreur("Type de conversation inconnu.", 400)
 }

@@ -4,8 +4,8 @@ import { useState, type SubmitEvent } from "react"
 import { api } from "@/lib/api"
 import type { Friend } from "@/lib/types"
 import { Button } from "@/components/ui/button"
+import { Field } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Modal } from "@/components/ui/modal"
 
 export function NewPrivateDialog({
@@ -59,8 +59,7 @@ export function NewPrivateDialog({
       )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="private-email">Ou écrire à quelqu&apos;un par email</Label>
+        <Field label="Ou écrire à quelqu'un par email" htmlFor="private-email">
           <Input
             id="private-email"
             type="email"
@@ -73,7 +72,7 @@ export function NewPrivateDialog({
             Si vous n&apos;êtes pas amis, la personne devra accepter vos messages privés avant de
             pouvoir vous répondre.
           </p>
-        </div>
+        </Field>
 
         {error && <p className="text-sm text-destructive">{error}</p>}
 

@@ -1,11 +1,11 @@
 import { prisma } from "@/lib/prisma"
 import { DEFAULT_SERVER_ID, getCurrentUser, joinDefaultServer, newInviteCode } from "@/lib/chat"
+import { erreur, nonConnecte } from "@/lib/reponses"
 
 export async function GET() {
   const user = await getCurrentUser()
 
   if (!user) {
-    // Un visiteur ne voit que le serveur par défaut (et seulement son #info).
     const server = await prisma.server.findUnique({ where: { id: DEFAULT_SERVER_ID } })
     const result = server
       ? [
@@ -42,22 +42,18 @@ export async function GET() {
   return Response.json(result)
 }
 
-/** Crée un serveur avec son soleil (#info) et un premier canal (#général). */
 export async function POST(request: Request) {
   const user = await getCurrentUser()
 
   if (!user) {
-    return Response.json({ error: "Vous devez être connecté." }, { status: 401 })
+    return nonConnecte()
   }
 
   const body = await request.json()
   const name = typeof body.name === "string" ? body.name.trim() : ""
 
   if (name === "" || name.length > 50) {
-    return Response.json(
-      { error: "Le nom du serveur est obligatoire (50 caractères max)." },
-      { status: 400 },
-    )
+    return erreur("Le nom du serveur est obligatoire (50 caractères max).", 400)
   }
 
   const server = await prisma.server.create({

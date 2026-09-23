@@ -8,10 +8,6 @@ import { Button } from "@/components/ui/button"
 import { IconButton } from "@/components/ui/icon-button"
 import { ConversationIcon } from "./conversation-icon"
 
-/**
- * En-tête de la messagerie : fil d'Ariane (Univers › galaxie › canal) et actions
- * du niveau affiché (gérer le serveur dans une galaxie, le canal ou le groupe sur une planète).
- */
 export function ChatHeader({
   showFriends,
   galaxyName,
@@ -28,11 +24,8 @@ export function ChatHeader({
   onLeaveServer,
 }: {
   showFriends: boolean
-  /** null : vue de l'univers. */
   galaxyName: string | null
-  /** Le serveur de la galaxie affichée (absent pour la galaxie personnelle). */
   server: ServerItem | undefined
-  /** La planète ouverte, s'il y en a une. */
   conversation: ConversationItem | undefined
   theme: UiTheme
   onOpenSidebar: () => void
@@ -47,7 +40,6 @@ export function ChatHeader({
   const inGalaxy = !showFriends && galaxyName !== null && !conversation
   const onPlanet = !showFriends && conversation !== undefined
   const isGroup = onPlanet && conversation.type === "GROUP"
-  // Le canal « général » d'Helix est créé automatiquement : on ne peut pas le supprimer.
   const canDeleteChannel =
     onPlanet &&
     conversation.type === "PUBLIC" &&

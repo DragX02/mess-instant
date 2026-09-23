@@ -38,7 +38,6 @@ export function ChatSidebar({
   servers: ServerItem[]
   conversations: ConversationItem[]
   galaxyId: string | null
-  /** Planète ouverte ; chaîne vide si aucune. */
   selectedId: string
   showFriends: boolean
   open: boolean
@@ -86,7 +85,6 @@ export function ChatSidebar({
   }
 
   const server = servers.find((item) => item.id === galaxyId)
-  // Le soleil (#info) en premier, puis les canaux.
   const channels = server
     ? conversationsIn(conversations, server.id).sort(
         (a, b) => Number(b.type === "INFO") - Number(a.type === "INFO"),

@@ -7,10 +7,8 @@ import { SpaceViewport } from "./space-viewport"
 import type { Camera } from "./use-camera"
 import { UserStar } from "./user-star"
 
-/** Nombre de planètes sur l'orbite la plus proche ; chaque orbite suivante en accueille 4 de plus. */
 const FIRST_RING_CAPACITY = 6
 
-/** Répartit les planètes sur des orbites concentriques : [6, 10, 14…] au maximum. */
 function ringSizes(count: number) {
   const sizes: number[] = []
   let capacity = FIRST_RING_CAPACITY
@@ -21,11 +19,10 @@ function ringSizes(count: number) {
   return sizes
 }
 
-/** Position stable d'une étoile, tirée de son identifiant, à l'écart du centre. */
 function starPosition(id: string) {
   const hash = hashString(id)
   const angle = ((hash % 360) * Math.PI) / 180
-  const distance = 0.2 + ((hash >>> 9) % 100) / 360 // entre 0,2 et 0,47
+  const distance = 0.2 + ((hash >>> 9) % 100) / 360
   return {
     left: `calc(50% + ${(Math.cos(angle) * distance * 100).toFixed(2)}cqw)`,
     top: `calc(50% + ${(Math.sin(angle) * distance * 100).toFixed(2)}cqh)`,
@@ -34,11 +31,6 @@ function starPosition(id: string) {
 
 export type GalaxyStar = { id: string; name: string }
 
-/**
- * Une galaxie vue comme un système solaire : le soleil (canal #info) au centre,
- * les canaux en planètes sur leurs orbites, les membres en étoiles tout autour.
- * Sans soleil (galaxie des messages privés), c'est l'étoile de l'utilisateur qui est au centre.
- */
 export function Galaxy({
   user,
   sun,
@@ -68,7 +60,6 @@ export function Galaxy({
           : undefined
       }
     >
-      {/* Les étoiles (membres) sont derrière les planètes et ne captent pas les clics. */}
       {stars.map((star) => (
         <div
           key={"star-" + star.id}
@@ -84,7 +75,6 @@ export function Galaxy({
       ))}
 
       {rings.map((size, ring) => {
-        // La première orbite laisse la place au soleil, les suivantes s'écartent jusqu'au bord.
         const fraction = 0.3 + (0.7 * (ring + 1)) / rings.length
         const rx = fraction * 40
         const ry = fraction * 36
@@ -102,7 +92,6 @@ export function Galaxy({
         const items = Array.from({ length: size }, (_, position) => {
           const index = first + position
           const conversation = planets[index]
-          // Décalage par orbite pour que les planètes ne s'alignent pas en rayons.
           const angle = ((-90 + (position * 360) / size + ring * 25) * Math.PI) / 180
 
           return (

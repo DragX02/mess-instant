@@ -1,59 +1,48 @@
-export interface PasswordStrength {
-  score: number // 0-4
+export type PasswordStrength = {
+  score: number
   level: "weak" | "fair" | "good" | "strong"
   feedback: string[]
   isValid: boolean
 }
 
-const REQUIREMENTS = {
-  minLength: 8,
-  hasLowercase: /[a-z]/,
-  hasUppercase: /[A-Z]/,
-  hasNumber: /\d/,
-  hasSpecial: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
+export const EMPTY_PASSWORD_STRENGTH: PasswordStrength = {
+  score: 0,
+  level: "weak",
+  feedback: [],
+  isValid: false,
 }
+
+const REQUIREMENTS = [
+  { test: (password: string) => password.length >= 8, message: "Minimum 8 caractères" },
+  {
+    test: (password: string) => /[a-z]/.test(password),
+    message: "Au moins une lettre minuscule (a-z)",
+  },
+  {
+    test: (password: string) => /[A-Z]/.test(password),
+    message: "Au moins une lettre majuscule (A-Z)",
+  },
+  { test: (password: string) => /\d/.test(password), message: "Au moins un chiffre (0-9)" },
+  {
+    test: (password: string) => /[!@#$%^&*()_+\-=\[\]{};':"\|,.<>\/?]/.test(password),
+    message: "Au moins un caractère spécial (!@#$%^&*)",
+  },
+]
 
 export function validatePasswordStrength(password: string): PasswordStrength {
   const feedback: string[] = []
   let score = 0
 
-  // Check minimum length
-  if (password.length >= REQUIREMENTS.minLength) {
-    score++
-  } else {
-    feedback.push(`Minimum ${REQUIREMENTS.minLength} caractères`)
+  for (const requirement of REQUIREMENTS) {
+    if (requirement.test(password)) {
+      score = score + 1
+    } else {
+      feedback.push(requirement.message)
+    }
   }
 
-  // Check lowercase
-  if (REQUIREMENTS.hasLowercase.test(password)) {
-    score++
-  } else {
-    feedback.push("Au moins une lettre minuscule (a-z)")
-  }
+  let level: PasswordStrength["level"] = "weak"
 
-  // Check uppercase
-  if (REQUIREMENTS.hasUppercase.test(password)) {
-    score++
-  } else {
-    feedback.push("Au moins une lettre majuscule (A-Z)")
-  }
-
-  // Check number
-  if (REQUIREMENTS.hasNumber.test(password)) {
-    score++
-  } else {
-    feedback.push("Au moins un chiffre (0-9)")
-  }
-
-  // Check special character
-  if (REQUIREMENTS.hasSpecial.test(password)) {
-    score++
-  } else {
-    feedback.push("Au moins un caractère spécial (!@#$%^&*)")
-  }
-
-  // Determine level
-  let level: "weak" | "fair" | "good" | "strong" = "weak"
   if (score >= 4) {
     level = "strong"
   } else if (score >= 3) {
@@ -62,10 +51,5 @@ export function validatePasswordStrength(password: string): PasswordStrength {
     level = "fair"
   }
 
-  return {
-    score,
-    level,
-    feedback,
-    isValid: score >= 3, // Minimum "good" pour être valide
-  }
+  return { score, level, feedback, isValid: score >= 3 }
 }

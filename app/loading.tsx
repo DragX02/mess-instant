@@ -9,8 +9,14 @@ export default function Loading() {
           <p className="text-muted-foreground">Chargement en cours...</p>
           <div className="flex justify-center gap-1">
             <div className="h-2 w-2 rounded-full bg-primary animate-bounce" />
-            <div className="h-2 w-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "0.1s" }} />
-            <div className="h-2 w-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "0.2s" }} />
+            <div
+              className="h-2 w-2 rounded-full bg-primary animate-bounce"
+              style={{ animationDelay: "0.1s" }}
+            />
+            <div
+              className="h-2 w-2 rounded-full bg-primary animate-bounce"
+              style={{ animationDelay: "0.2s" }}
+            />
           </div>
         </div>
       </div>

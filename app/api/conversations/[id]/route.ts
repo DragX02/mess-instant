@@ -1,26 +1,27 @@
 import { prisma } from "@/lib/prisma"
 import { canManageServer, getCurrentUser, isMember } from "@/lib/chat"
+import { actionImpossible, erreur, nonConnecte, ok } from "@/lib/reponses"
 
 export async function PATCH(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
   const user = await getCurrentUser()
 
   if (!user) {
-    return Response.json({ error: "Vous devez être connecté." }, { status: 401 })
+    return nonConnecte()
   }
 
   const conversation = await prisma.conversation.findUnique({ where: { id } })
 
   if (!conversation || conversation.type !== "PRIVATE") {
-    return Response.json({ error: "Conversation introuvable." }, { status: 404 })
+    return erreur("Conversation introuvable.", 404)
   }
   if (!(await isMember(user.id, id)) || conversation.createdById === user.id) {
-    return Response.json({ error: "Action impossible." }, { status: 403 })
+    return actionImpossible()
   }
 
   await prisma.conversation.update({ where: { id }, data: { accepted: true } })
 
-  return Response.json({ ok: true })
+  return ok()
 }
 
 export async function DELETE(request: Request, ctx: { params: Promise<{ id: string }> }) {
@@ -28,13 +29,13 @@ export async function DELETE(request: Request, ctx: { params: Promise<{ id: stri
   const user = await getCurrentUser()
 
   if (!user) {
-    return Response.json({ error: "Vous devez être connecté." }, { status: 401 })
+    return nonConnecte()
   }
 
   const conversation = await prisma.conversation.findUnique({ where: { id } })
 
   if (!conversation) {
-    return Response.json({ error: "Conversation introuvable." }, { status: 404 })
+    return erreur("Conversation introuvable.", 404)
   }
 
   if (conversation.type === "PUBLIC") {
@@ -42,19 +43,19 @@ export async function DELETE(request: Request, ctx: { params: Promise<{ id: stri
       ? await canManageServer(user, conversation.serverId)
       : user.isAdmin
     if (!canManage || conversation.id === "general") {
-      return Response.json({ error: "Action impossible." }, { status: 403 })
+      return actionImpossible()
     }
     await prisma.conversation.delete({ where: { id } })
-    return Response.json({ ok: true })
+    return ok()
   }
 
   if (!(await isMember(user.id, id))) {
-    return Response.json({ error: "Action impossible." }, { status: 403 })
+    return actionImpossible()
   }
 
   if (conversation.type === "PRIVATE") {
     await prisma.conversation.delete({ where: { id } })
-    return Response.json({ ok: true })
+    return ok()
   }
 
   if (conversation.type === "GROUP") {
@@ -66,8 +67,8 @@ export async function DELETE(request: Request, ctx: { params: Promise<{ id: stri
     if (remaining === 0) {
       await prisma.conversation.delete({ where: { id } })
     }
-    return Response.json({ ok: true })
+    return ok()
   }
 
-  return Response.json({ error: "Action impossible." }, { status: 403 })
+  return actionImpossible()
 }

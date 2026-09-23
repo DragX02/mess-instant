@@ -36,7 +36,6 @@ enum ConversationType {
   PRIVATE
 }
 
-/// Un serveur est affiché comme une galaxie : son canal INFO est le soleil, ses canaux les planètes.
 model Server {
   id          String   @id @default(cuid())
   name        String
@@ -68,7 +67,6 @@ model Conversation {
   accepted    Boolean          @default(true)
   createdById String?
   createdAt   DateTime         @default(now())
-  /// Renseigné pour les canaux INFO et PUBLIC ; null pour les groupes et messages privés.
   serverId    String?
 
   server      Server?      @relation(fields: [serverId], references: [id], onDelete: Cascade)

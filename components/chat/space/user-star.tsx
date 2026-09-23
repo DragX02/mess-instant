@@ -1,14 +1,12 @@
 import { cn } from "cn"
 
 const VARIANTS = {
-  /** L'utilisateur connecté : grande étoile dorée. */
   me: {
     gradient: "user-star-me",
     stops: ["#fffbe8", "#ffd166", "#df6035"],
     glow: "drop-shadow-[0_0_10px_rgba(255,200,90,0.85)]",
     label: "text-xs font-medium text-amber-100",
   },
-  /** Les autres membres : petites étoiles bleutées. */
   other: {
     gradient: "user-star-other",
     stops: ["#ffffff", "#cfe0ff", "#7399bf"],
@@ -17,7 +15,6 @@ const VARIANTS = {
   },
 }
 
-/** Étoile qui représente une personne, avec son nom en dessous. */
 export function UserStar({
   name,
   size = 44,

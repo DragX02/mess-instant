@@ -1,11 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { api, apiSend } from "@/lib/api"
-import { authClient } from "@/lib/auth-client"
 import { PERSONAL_GALAXY, galaxyOf } from "@/lib/galaxies"
 import { usePolling } from "@/hooks/use-polling"
+import { useSignOut } from "@/hooks/use-sign-out"
 import { useUiTheme } from "@/hooks/use-ui-theme"
 import type {
   ConversationItem,
@@ -26,11 +25,10 @@ import type { GalaxyStar } from "./space/galaxy"
 const NO_FRIENDS: FriendsData = { friends: [], received: [], sent: [] }
 
 export function ChatApp({ user }: { user: CurrentUser | null }) {
-  const router = useRouter()
+  const signOut = useSignOut()
   const { theme, apply } = useUiTheme()
   const [servers, setServers] = useState<ServerItem[]>([])
   const [conversations, setConversations] = useState<ConversationItem[]>([])
-  // Navigation : univers (galaxyId null) › galaxie › planète ouverte.
   const [galaxyId, setGalaxyId] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState("")
   const [planetOpen, setPlanetOpen] = useState(false)
@@ -43,7 +41,6 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
   const [dialog, setDialog] = useState<DialogName>("")
   const [refresh, setRefresh] = useState(0)
 
-  // Serveurs, conversations et amis : rafraîchis toutes les 5 s.
   usePolling(
     async (isActive) => {
       const [serverList, list] = await Promise.all([
@@ -73,7 +70,6 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
     [user, refresh],
   )
 
-  // Membres du serveur affiché, dessinés en étoiles dans sa galaxie.
   usePolling(
     async (isActive) => {
       if (!user || !galaxyId || galaxyId === PERSONAL_GALAXY) {
@@ -88,7 +84,6 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
     [user, galaxyId, refresh],
   )
 
-  // Messages de la planète ouverte : rafraîchis toutes les 2 s.
   usePolling(
     async (isActive) => {
       if (!planetOpen || !selectedId) {
@@ -135,10 +130,6 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
     closePanels()
   }
 
-  /**
-   * Ouvre une planète. Sa galaxie est déduite de la conversation ; `galaxy` sert quand
-   * la conversation vient d'être créée et n'est pas encore dans la liste.
-   */
   function selectConversation(id: string, galaxy?: string) {
     const found = conversations.find((conversation) => conversation.id === id)
     const target = galaxy ?? (found ? galaxyOf(found) : (galaxyId ?? PERSONAL_GALAXY))
@@ -156,7 +147,6 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
     closePanels()
   }
 
-  /** Crée (ou retrouve) une conversation privée ou un groupe, puis l'ouvre. */
   async function openConversation(body: Record<string, unknown>) {
     const result = await api<{ id: string }>("/api/conversations", { method: "POST", body })
 
@@ -228,12 +218,6 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
     reload()
   }
 
-  async function handleSignOut() {
-    await authClient.signOut()
-    router.push("/auth/connexion")
-    router.refresh()
-  }
-
   const server = servers.find((item) => item.id === galaxyId)
   const selected = planetOpen
     ? conversations.find((conversation) => conversation.id === selectedId)
@@ -245,7 +229,6 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
         ? "Messages privés"
         : server?.name || "Galaxie"
 
-  // Galaxie personnelle : l'utilisateur est au centre, ses amis sont les étoiles.
   const stars: GalaxyStar[] =
     galaxyId === PERSONAL_GALAXY
       ? friendsData.friends.map((friend) => ({ id: friend.id, name: friend.name }))
@@ -276,7 +259,7 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
         onNewGroup={() => setDialog("groupe")}
         onNewPrivate={() => setDialog("mp")}
         onOpenSettings={() => setDialog("parametres")}
-        onSignOut={handleSignOut}
+        onSignOut={signOut}
       />
 
       <main className="flex min-w-0 flex-1 flex-col">

@@ -4,15 +4,13 @@ import { useState, type FormEvent } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { authClient } from "@/lib/auth-client"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Logo } from "@/components/logo"
-import { PasswordInput, PasswordStrengthMeter } from "@/components/auth"
-import { validatePasswordStrength, type PasswordStrength } from "@/lib/password-validator"
 import { translateError } from "@/lib/error-messages"
-import { GoogleIcon } from "@/components/google-icon"
+import { EMPTY_PASSWORD_STRENGTH, validatePasswordStrength } from "@/lib/password-validator"
+import { Alert } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import { Field } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { AuthCard, GoogleButton, PasswordInput, PasswordStrengthMeter } from "@/components/auth"
 
 export default function InscriptionPage() {
   const router = useRouter()
@@ -22,15 +20,9 @@ export default function InscriptionPage() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [googleLoading, setGoogleLoading] = useState(false)
-  const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
-    score: 0,
-    level: "weak",
-    feedback: [],
-    isValid: false,
-  })
+  const [passwordStrength, setPasswordStrength] = useState(EMPTY_PASSWORD_STRENGTH)
 
-  const handlePasswordChange = (value: string) => {
+  function handlePasswordChange(value: string) {
     setPassword(value)
     setPasswordStrength(validatePasswordStrength(value))
   }
@@ -51,12 +43,7 @@ export default function InscriptionPage() {
 
     setLoading(true)
 
-    // Vérification d'email désactivée pour l'instant (voir lib/auth.ts) : signUp.email ouvre directement une session.
-    const { error: signUpError } = await authClient.signUp.email({
-      name,
-      email,
-      password,
-    })
+    const { error: signUpError } = await authClient.signUp.email({ name, email, password })
 
     setLoading(false)
 
@@ -68,114 +55,74 @@ export default function InscriptionPage() {
     router.push("/dashboard")
   }
 
-  async function handleGoogleSignUp() {
-    setGoogleLoading(true)
-    await authClient.signIn.social({
-      provider: "google",
-      callbackURL: "/dashboard",
-    })
-  }
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background text-foreground px-4 py-16">
-      <Card className="w-full max-w-md rounded-[var(--radius)]">
-        <CardHeader className="flex flex-col items-center pt-8">
-          <Logo href="/" full className="mb-6" />
-          <CardTitle className="text-2xl">Créer un compte</CardTitle>
-          <CardDescription>Rejoignez votre équipe sur Helix en quelques secondes.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="name">Nom</Label>
-              <Input
-                id="name"
-                type="text"
-                autoComplete="name"
-                required
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                placeholder="Votre nom"
-              />
-            </div>
+    <AuthCard
+      title="Créer un compte"
+      description="Rejoignez votre équipe sur Helix en quelques secondes."
+    >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <Field label="Nom" htmlFor="name">
+          <Input
+            id="name"
+            type="text"
+            autoComplete="name"
+            required
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            placeholder="Votre nom"
+          />
+        </Field>
 
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder="vous@entreprise.com"
-              />
-            </div>
+        <Field label="Email" htmlFor="email">
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="vous@entreprise.com"
+          />
+        </Field>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="password">Mot de passe</Label>
-              <PasswordInput
-                id="password"
-                autoComplete="new-password"
-                required
-                minLength={8}
-                value={password}
-                onChange={(event) => handlePasswordChange(event.target.value)}
-              />
-              <PasswordStrengthMeter strength={passwordStrength} />
-            </div>
+        <Field label="Mot de passe" htmlFor="password" className="gap-2">
+          <PasswordInput
+            id="password"
+            autoComplete="new-password"
+            required
+            minLength={8}
+            value={password}
+            onChange={(event) => handlePasswordChange(event.target.value)}
+          />
+          <PasswordStrengthMeter strength={passwordStrength} />
+        </Field>
 
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="confirm-password">Confirmer le mot de passe</Label>
-              <PasswordInput
-                id="confirm-password"
-                autoComplete="new-password"
-                required
-                minLength={8}
-                value={confirmPassword}
-                onChange={(event) => setConfirmPassword(event.target.value)}
-              />
-            </div>
+        <Field label="Confirmer le mot de passe" htmlFor="confirm-password">
+          <PasswordInput
+            id="confirm-password"
+            autoComplete="new-password"
+            required
+            minLength={8}
+            value={confirmPassword}
+            onChange={(event) => setConfirmPassword(event.target.value)}
+          />
+        </Field>
 
-            {error && (
-              <p
-                role="alert"
-                className="rounded-[var(--radius)] border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-              >
-                {error}
-              </p>
-            )}
+        {error && <Alert>{error}</Alert>}
 
-            <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Création du compte..." : "Créer mon compte"}
-            </Button>
+        <Button type="submit" disabled={loading} className="w-full">
+          {loading ? "Création du compte..." : "Créer mon compte"}
+        </Button>
 
-            <div className="flex items-center gap-3">
-              <div className="h-px flex-1 bg-border" />
-              <span className="text-xs text-muted-foreground">ou</span>
-              <div className="h-px flex-1 bg-border" />
-            </div>
+        <GoogleButton loadingLabel="Inscription..." />
+      </form>
 
-            <Button
-              type="button"
-              variant="outline"
-              disabled={googleLoading}
-              onClick={handleGoogleSignUp}
-              className="w-full"
-            >
-              <GoogleIcon className="h-4 w-4 mr-2" />
-              {googleLoading ? "Inscription..." : "Google"}
-            </Button>
-          </form>
-
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            Déjà un compte ?{" "}
-            <Link href="/auth/connexion" className="text-primary hover:underline">
-              Connectez-vous
-            </Link>
-          </p>
-        </CardContent>
-      </Card>
-    </div>
+      <p className="mt-6 text-center text-sm text-muted-foreground">
+        Déjà un compte ?{" "}
+        <Link href="/auth/connexion" className="text-primary hover:underline">
+          Connectez-vous
+        </Link>
+      </p>
+    </AuthCard>
   )
 }

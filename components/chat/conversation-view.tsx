@@ -1,12 +1,11 @@
 "use client"
 
 import { useCallback, useRef, useState, type SetStateAction } from "react"
-import Link from "next/link"
 import { LogIn, Plus, ZoomOut } from "lucide-react"
 import { PERSONAL_GALAXY, conversationsIn } from "@/lib/galaxies"
+import { placeholderFor } from "@/lib/conversations"
 import type { ConversationItem, CurrentUser, MessageItem, ServerItem } from "@/lib/types"
-import { Button } from "@/components/ui/button"
-import { Notice } from "@/components/ui/notice"
+import { ChatNotices, PendingBanners } from "./conversation-notices"
 import { MessageForm } from "./message-form"
 import { MessageList } from "./message-list"
 import { Galaxy, type GalaxyStar } from "./space/galaxy"
@@ -15,17 +14,6 @@ import { planetStyle, sunStyle } from "./space/planet-style"
 import { Universe } from "./space/universe"
 import { DEFAULT_CAMERA, type Camera } from "./space/use-camera"
 
-function placeholderFor(conversation: ConversationItem | undefined) {
-  if (!conversation) {
-    return "Écrire un message"
-  }
-  if (conversation.type === "INFO" || conversation.type === "PUBLIC") {
-    return "Écrire dans #" + conversation.name
-  }
-  return "Écrire à " + conversation.name
-}
-
-/** Bouton de navigation en haut à gauche de la scène (retour au niveau supérieur). */
 function SceneButton({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
   return (
     <button
@@ -38,12 +26,6 @@ function SceneButton({ onClick, children }: { onClick: () => void; children: Rea
   )
 }
 
-/**
- * La scène spatiale, sur trois niveaux :
- * - l'univers : chaque serveur est une galaxie ;
- * - une galaxie : soleil (#info), planètes (canaux) et étoiles (membres) ;
- * - une planète ouverte : ses messages et le formulaire d'envoi.
- */
 export function ConversationView({
   user,
   servers,
@@ -67,14 +49,11 @@ export function ConversationView({
   user: CurrentUser | null
   servers: ServerItem[]
   conversations: ConversationItem[]
-  /** null : vue de l'univers. */
   galaxyId: string | null
   conversationId: string
-  /** `true` : la planète `conversationId` est ouverte. */
   open: boolean
   messages: MessageItem[]
   canWrite: boolean
-  /** Membres (serveur) ou amis (galaxie personnelle) affichés en étoiles. */
   stars: GalaxyStar[]
   onChange: () => void
   onAccept: () => void
@@ -88,7 +67,6 @@ export function ConversationView({
 }) {
   const planetRef = useRef<HTMLDivElement>(null)
 
-  // Une caméra (zoom + position) par vue, conservée quand on navigue entre les niveaux.
   const [cameras, setCameras] = useState<Record<string, Camera>>({})
   const cameraKey = galaxyId ?? "univers"
   const camera = cameras[cameraKey] ?? DEFAULT_CAMERA
@@ -106,11 +84,6 @@ export function ConversationView({
   const inGalaxy = galaxyId ? conversationsIn(conversations, galaxyId) : []
   const sun = inGalaxy.find((item) => item.type === "INFO")
   const conversation = open ? inGalaxy.find((item) => item.id === conversationId) : undefined
-
-  // Une conversation privée reste « en attente » tant que le destinataire n'a pas accepté.
-  const isPending = conversation?.type === "PRIVATE" && !conversation.accepted
-  const pendingForMe = isPending && user !== null && conversation.createdById !== user.id
-  const pendingByMe = isPending && user !== null && conversation.createdById === user.id
 
   const universeGalaxies = [
     ...servers.map((item) => ({
@@ -181,7 +154,6 @@ export function ConversationView({
 
     return (
       <>
-        {/* Les autres astres de la galaxie restent visibles sur les côtés pour passer de l'un à l'autre. */}
         <PlanetOrbit
           conversations={inGalaxy.filter((item) => item.id !== conversationId)}
           onSelect={onSelect}
@@ -199,7 +171,6 @@ export function ConversationView({
             }
             className="relative h-full w-full animate-planet-open overflow-hidden rounded-full"
           >
-            {/* Voile sombre sur le soleil pour garder les messages lisibles. */}
             {conversation?.type === "INFO" && (
               <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(40,15,0,0.55)_0%,rgba(40,15,0,0.35)_60%,transparent_75%)]" />
             )}
@@ -226,32 +197,12 @@ export function ConversationView({
 
   return (
     <>
-      {pendingForMe && (
-        <div className="flex flex-wrap items-center gap-3 border-b border-border bg-accent/40 px-4 py-3 text-sm">
-          <span>
-            <strong>{conversation.name}</strong> souhaite vous envoyer des messages privés.
-          </span>
-          <div className="ml-auto flex gap-2">
-            <Button size="sm" onClick={onAccept}>
-              Accepter
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => onDelete("Refuser et supprimer cette conversation ?")}
-            >
-              Refuser
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {pendingByMe && (
-        <Notice variant="banner">
-          Vous n&apos;êtes pas encore amis : {conversation.name} doit accepter vos messages privés
-          pour pouvoir vous répondre.
-        </Notice>
-      )}
+      <PendingBanners
+        conversation={conversation}
+        user={user}
+        onAccept={onAccept}
+        onDelete={onDelete}
+      />
 
       <div className="space-bg relative flex min-h-0 flex-1 flex-col overflow-hidden">
         <div className="space-stars-far" />
@@ -271,23 +222,7 @@ export function ConversationView({
         )}
       </div>
 
-      {!user && (
-        <Notice>
-          Vous êtes visiteur : vous pouvez lire le canal #info de Helix.{" "}
-          <Link href="/auth/connexion" className="text-primary hover:underline">
-            Connectez-vous
-          </Link>{" "}
-          pour discuter.
-        </Notice>
-      )}
-
-      {open && user && !canWrite && conversation?.type === "INFO" && (
-        <Notice>Seuls les admins du serveur peuvent écrire dans #info.</Notice>
-      )}
-
-      {user && !canWrite && pendingForMe && (
-        <Notice>Acceptez la demande pour pouvoir répondre.</Notice>
-      )}
+      <ChatNotices user={user} conversation={conversation} open={open} canWrite={canWrite} />
     </>
   )
 }

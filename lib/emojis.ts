@@ -1,4 +1,3 @@
-/** Emojis proposés dans le sélecteur du formulaire de message. */
 export const EMOJIS = [
   "😀",
   "😁",
@@ -42,5 +41,4 @@ export const EMOJIS = [
   "🚀",
 ]
 
-/** Emojis proposés en réaction rapide sous un message. */
 export const QUICK_REACTIONS = ["👍", "❤️", "😂", "😮", "😢", "🎉"]

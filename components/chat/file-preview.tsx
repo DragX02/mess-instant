@@ -3,7 +3,6 @@ import { Download, File } from "lucide-react"
 import { cn } from "cn"
 import { VoiceNote } from "./voice-note"
 
-/** Affiche une pièce jointe selon son type : image, vidéo, audio, ou lien de téléchargement. */
 export function FilePreview({
   url,
   name,
@@ -15,7 +14,6 @@ export function FilePreview({
   name: string
   type: string
   audioDuration?: number | null
-  /** « sombre » sur les bulles de l'univers, « clair » dans l'interface classique. */
   tone?: "sombre" | "clair"
 }) {
   const clair = tone === "clair"

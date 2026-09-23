@@ -1,7 +1,3 @@
-/**
- * Fait voler une copie de la bulle de brouillon jusqu'au centre de la planète,
- * puis fait « vibrer » la planète à l'impact. Résout la promesse une fois l'animation finie.
- */
 export async function launchBubble(bubble: HTMLElement, planet: HTMLElement) {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     return
@@ -27,7 +23,6 @@ export async function launchBubble(bubble: HTMLElement, planet: HTMLElement) {
   document.body.appendChild(clone)
 
   try {
-    // Trajectoire en arc : la bulle monte d'abord un peu sur le côté avant de plonger.
     await clone.animate(
       [
         { transform: "translate(0, 0) scale(1)", opacity: 1 },
@@ -41,7 +36,6 @@ export async function launchBubble(bubble: HTMLElement, planet: HTMLElement) {
       { duration: 800, easing: "cubic-bezier(0.45, 0, 0.3, 1)" },
     ).finished
   } catch {
-    // Animation interrompue (onglet caché, etc.) : rien à faire.
   } finally {
     clone.remove()
   }

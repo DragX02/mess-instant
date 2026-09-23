@@ -5,6 +5,24 @@ import { auth } from "@/lib/auth"
 import { DEFAULT_SERVER_ID } from "@/lib/galaxies"
 import { prisma } from "@/lib/prisma"
 
+export { DEFAULT_SERVER_ID }
+
+type PersonneVisible = { id: string; name: string | null; email: string }
+
+export const CHAMPS_UTILISATEUR = { id: true, name: true, email: true }
+
+export function nomAffiche(user: PersonneVisible) {
+  return user.name || user.email
+}
+
+export function membresVisibles(membres: { role: string; user: PersonneVisible }[]) {
+  return membres.map((membre) => ({
+    id: membre.user.id,
+    name: nomAffiche(membre.user),
+    role: membre.role,
+  }))
+}
+
 export async function getCurrentUser() {
   const session = await auth.api.getSession({ headers: await headers() })
 
@@ -14,8 +32,6 @@ export async function getCurrentUser() {
 
   return prisma.user.findUnique({ where: { id: session.user.id } })
 }
-
-export { DEFAULT_SERVER_ID }
 
 export async function createDefaultChannels() {
   await connection()
@@ -39,7 +55,6 @@ export async function createDefaultChannels() {
   })
 }
 
-/** Tout utilisateur connecté fait partie du serveur par défaut. */
 export async function joinDefaultServer(user: User) {
   await prisma.serverMember.upsert({
     where: { userId_serverId: { userId: user.id, serverId: DEFAULT_SERVER_ID } },
@@ -52,7 +67,6 @@ export async function joinDefaultServer(user: User) {
   })
 }
 
-/** Rôle de l'utilisateur dans le serveur, ou null s'il n'en est pas membre. */
 export async function serverRole(userId: string, serverId: string) {
   const member = await prisma.serverMember.findUnique({
     where: { userId_serverId: { userId, serverId } },
@@ -61,7 +75,6 @@ export async function serverRole(userId: string, serverId: string) {
   return member ? member.role : null
 }
 
-/** Propriétaire ou admin du serveur (les admins du site peuvent tout gérer). */
 export async function canManageServer(user: User, serverId: string) {
   if (user.isAdmin) {
     return true
@@ -71,7 +84,6 @@ export async function canManageServer(user: User, serverId: string) {
   return role === "OWNER" || role === "ADMIN"
 }
 
-/** Code d'invitation court et lisible, par exemple « K7P2QX9M ». */
 export function newInviteCode() {
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
   const bytes = crypto.getRandomValues(new Uint8Array(8))
@@ -88,7 +100,6 @@ export async function isMember(userId: string, conversationId: string) {
 
 export async function canRead(conversation: Conversation, user: User | null) {
   if (conversation.serverId) {
-    // Le #info du serveur par défaut reste la vitrine publique du site.
     if (conversation.serverId === DEFAULT_SERVER_ID && conversation.type === "INFO") {
       return true
     }

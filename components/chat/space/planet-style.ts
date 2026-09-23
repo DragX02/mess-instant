@@ -1,7 +1,6 @@
 import type { CSSProperties } from "react"
 import type { ConversationType } from "@/lib/types"
 
-/** Teinte de base par type ; l'identifiant la fait varier pour que chaque planète soit unique. */
 const BASE_HUES: Record<ConversationType, number> = {
   INFO: 38,
   PUBLIC: 205,
@@ -9,7 +8,6 @@ const BASE_HUES: Record<ConversationType, number> = {
   PRIVATE: 150,
 }
 
-/** Entier positif stable tiré d'une chaîne, pour des couleurs et positions reproductibles. */
 export function hashString(value: string) {
   let hash = 0
   for (const char of value) {
@@ -22,7 +20,6 @@ function hueFor(id: string, type: ConversationType) {
   return (BASE_HUES[type] + (hashString(id) % 50) - 25 + 360) % 360
 }
 
-/** Dégradé sphérique (lumière en haut à gauche) et halo d'atmosphère d'une planète. */
 export function planetStyle(id: string, type: ConversationType, dim = false): CSSProperties {
   const hue = hueFor(id, type)
   const light = dim ? 38 : 62
@@ -34,7 +31,6 @@ export function planetStyle(id: string, type: ConversationType, dim = false): CS
   }
 }
 
-/** Le soleil d'une galaxie (canal #info) : cœur blanc, couronne orangée rayonnante. */
 export function sunStyle(): CSSProperties {
   return {
     background:
@@ -44,7 +40,6 @@ export function sunStyle(): CSSProperties {
   }
 }
 
-/** Teinte d'une galaxie (serveur) dans la vue de l'univers. */
 export function galaxyHue(id: string) {
   return hashString(id) % 360
 }

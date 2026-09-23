@@ -1,7 +1,6 @@
 import { cn } from "cn"
 import { Avatar } from "@/components/ui/avatar"
 
-/** Ligne « avatar + nom (+ sous-titre) + actions », utilisée pour les amis et les membres. */
 export function PersonRow({
   name,
   subtitle,

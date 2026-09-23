@@ -1,9 +1,7 @@
 import { cn } from "cn"
 
 const variants = {
-  /** Message d'information sous la zone de conversation. */
   footer: "border-t border-border px-4 py-4 text-center",
-  /** Bandeau d'information au-dessus de la zone de conversation. */
   banner: "border-b border-border bg-muted/60 px-4 py-3",
 }
 

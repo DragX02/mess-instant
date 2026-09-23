@@ -8,11 +8,9 @@ import type { Camera } from "./use-camera"
 export type UniverseGalaxy = {
   id: string
   name: string
-  /** Sous-titre sous le nom, par exemple le nombre de membres. */
   detail: string
 }
 
-/** Galaxie spirale vue de biais : deux bras en rotation lente autour d'un noyau lumineux. */
 function GalaxyGlyph({ id }: { id: string }) {
   const hue = galaxyHue(id)
   const arm = `hsl(${hue} 85% 70% / 0.75)`
@@ -44,7 +42,6 @@ function GalaxyGlyph({ id }: { id: string }) {
   )
 }
 
-/** Vue de l'univers : chaque serveur de l'utilisateur est une galaxie sur laquelle on clique. */
 export function Universe({
   galaxies,
   camera,
@@ -63,7 +60,6 @@ export function Universe({
       hint="Cliquez sur une galaxie pour y entrer"
     >
       {galaxies.map((galaxy, index) => {
-        // Une seule galaxie : au centre. Sinon, en cercle autour du centre.
         const angle = ((-90 + (index * 360) / galaxies.length) * Math.PI) / 180
         const radius = galaxies.length > 1 ? 1 : 0
 

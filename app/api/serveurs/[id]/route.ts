@@ -1,19 +1,19 @@
 import { prisma } from "@/lib/prisma"
 import { DEFAULT_SERVER_ID, getCurrentUser, serverRole } from "@/lib/chat"
+import { actionImpossible, nonConnecte, ok } from "@/lib/reponses"
 
-/** Le propriétaire supprime le serveur ; un autre membre le quitte. */
 export async function DELETE(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
   const user = await getCurrentUser()
 
   if (!user) {
-    return Response.json({ error: "Vous devez être connecté." }, { status: 401 })
+    return nonConnecte()
   }
 
   const role = await serverRole(user.id, id)
 
   if (id === DEFAULT_SERVER_ID || role === null) {
-    return Response.json({ error: "Action impossible." }, { status: 403 })
+    return actionImpossible()
   }
 
   if (role === "OWNER") {
@@ -24,5 +24,5 @@ export async function DELETE(request: Request, ctx: { params: Promise<{ id: stri
     })
   }
 
-  return Response.json({ ok: true })
+  return ok()
 }

@@ -1,18 +1,19 @@
 import { prisma } from "@/lib/prisma"
-import { getCurrentUser } from "@/lib/chat"
+import { CHAMPS_UTILISATEUR, getCurrentUser, nomAffiche } from "@/lib/chat"
+import { erreur, nonConnecte, ok } from "@/lib/reponses"
 
 export async function GET() {
   const user = await getCurrentUser()
 
   if (!user) {
-    return Response.json({ error: "Vous devez être connecté." }, { status: 401 })
+    return nonConnecte()
   }
 
   const friendships = await prisma.friendship.findMany({
     where: { OR: [{ requesterId: user.id }, { receiverId: user.id }] },
     include: {
-      requester: { select: { id: true, name: true, email: true } },
-      receiver: { select: { id: true, name: true, email: true } },
+      requester: { select: CHAMPS_UTILISATEUR },
+      receiver: { select: CHAMPS_UTILISATEUR },
     },
     orderBy: { createdAt: "asc" },
   })
@@ -26,7 +27,7 @@ export async function GET() {
     const item = {
       friendshipId: friendship.id,
       id: other.id,
-      name: other.name || other.email,
+      name: nomAffiche(other),
       email: other.email,
     }
 
@@ -46,7 +47,7 @@ export async function POST(request: Request) {
   const user = await getCurrentUser()
 
   if (!user) {
-    return Response.json({ error: "Vous devez être connecté." }, { status: 401 })
+    return nonConnecte()
   }
 
   const body = await request.json()
@@ -54,10 +55,10 @@ export async function POST(request: Request) {
   const target = await prisma.user.findUnique({ where: { email } })
 
   if (!target) {
-    return Response.json({ error: "Aucun utilisateur avec cet email." }, { status: 404 })
+    return erreur("Aucun utilisateur avec cet email.", 404)
   }
   if (target.id === user.id) {
-    return Response.json({ error: "Vous ne pouvez pas vous ajouter vous-même." }, { status: 400 })
+    return erreur("Vous ne pouvez pas vous ajouter vous-même.", 400)
   }
 
   const existing = await prisma.friendship.findFirst({
@@ -71,18 +72,15 @@ export async function POST(request: Request) {
 
   if (existing) {
     if (existing.accepted) {
-      return Response.json({ error: "Vous êtes déjà amis." }, { status: 400 })
+      return erreur("Vous êtes déjà amis.", 400)
     }
     if (existing.requesterId === user.id) {
-      return Response.json({ error: "Demande déjà envoyée." }, { status: 400 })
+      return erreur("Demande déjà envoyée.", 400)
     }
-    return Response.json(
-      { error: "Cette personne vous a déjà envoyé une demande, acceptez-la." },
-      { status: 400 },
-    )
+    return erreur("Cette personne vous a déjà envoyé une demande, acceptez-la.", 400)
   }
 
   await prisma.friendship.create({ data: { requesterId: user.id, receiverId: target.id } })
 
-  return Response.json({ ok: true })
+  return ok()
 }

@@ -13,7 +13,6 @@ export type ConversationItem = {
   accepted: boolean
   createdById: string | null
   memberCount: number
-  /** Serveur (galaxie) du canal ; null pour les groupes et messages privés. */
   serverId: string | null
 }
 
@@ -21,7 +20,6 @@ export type ServerItem = {
   id: string
   name: string
   inviteCode: string
-  /** null pour un visiteur, qui ne voit que le serveur par défaut. */
   role: "OWNER" | "ADMIN" | "MEMBER" | null
   canManage: boolean
   memberCount: number

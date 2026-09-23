@@ -172,8 +172,6 @@
   }
 }
 
-/* ---------- Scène spatiale des conversations ---------- */
-
 @theme {
   --animate-twinkle: twinkle 4s ease-in-out infinite;
   --animate-float: float 7s ease-in-out infinite;
@@ -224,7 +222,6 @@
   }
 }
 
-/* Fond de ciel étoilé : l'espace reste sombre quel que soit le thème. */
 .space-bg {
   background: radial-gradient(ellipse at 50% 40%, #1c2a5c 0%, #0c1230 50%, #05060f 100%);
 }
@@ -260,7 +257,6 @@
   background-size: 190px 190px;
 }
 
-/* Fondu en haut et en bas de la zone de messages, à l'intérieur de la planète. */
 .planet-fade {
   mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
 }

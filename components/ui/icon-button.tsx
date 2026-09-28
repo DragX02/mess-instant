@@ -1,10 +1,6 @@
 import * as React from "react"
 import { cn } from "cn"
 
-/**
- * Bouton ne contenant qu'une icône. `label` sert à la fois d'aria-label et d'infobulle,
- * pour ne pas oublier l'accessibilité à chaque usage.
- */
 function IconButton({
   label,
   className,

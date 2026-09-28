@@ -1,43 +1,58 @@
 "use client"
 
 import Link from "next/link"
-import { LogOut, UserPlus } from "lucide-react"
+import { LogIn, MessageCircle, Orbit, UserPlus } from "lucide-react"
 import { cn } from "cn"
-import type { ConversationItem, ConversationType, CurrentUser } from "@/lib/types"
-import { Avatar } from "@/components/ui/avatar"
+import { PERSONAL_GALAXY, conversationsIn } from "@/lib/galaxies"
+import type { ConversationItem, ConversationType, CurrentUser, ServerItem } from "@/lib/types"
+import type { UiTheme } from "@/hooks/use-ui-theme"
 import { Button } from "@/components/ui/button"
-import { IconButton } from "@/components/ui/icon-button"
 import { SidebarButton, SidebarEmpty, SidebarSection } from "@/components/ui/sidebar-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { ConversationIcon } from "./conversation-icon"
+import { UserMenu } from "./user-menu"
 
 export function ChatSidebar({
   user,
+  servers,
   conversations,
+  galaxyId,
   selectedId,
   showFriends,
   open,
+  theme,
   friendRequestCount,
   onClose,
   onSelect,
+  onEnterGalaxy,
   onShowFriends,
+  onCreateServer,
+  onJoinServer,
   onCreateChannel,
   onNewGroup,
   onNewPrivate,
+  onOpenSettings,
   onSignOut,
 }: {
   user: CurrentUser | null
+  servers: ServerItem[]
   conversations: ConversationItem[]
+  galaxyId: string | null
   selectedId: string
   showFriends: boolean
   open: boolean
+  theme: UiTheme
   friendRequestCount: number
   onClose: () => void
   onSelect: (id: string) => void
+  onEnterGalaxy: (id: string) => void
   onShowFriends: () => void
+  onCreateServer: () => void
+  onJoinServer: () => void
   onCreateChannel: () => void
   onNewGroup: () => void
   onNewPrivate: () => void
+  onOpenSettings: () => void
   onSignOut: () => void
 }) {
   function list(...types: ConversationType[]) {
@@ -57,6 +72,24 @@ export function ChatSidebar({
     )
   }
 
+  function galaxyEntry(id: string, label: string, icon: React.ReactNode) {
+    return (
+      <SidebarButton
+        key={id}
+        icon={icon}
+        label={label}
+        active={!showFriends && galaxyId === id && selectedId === ""}
+        onClick={() => onEnterGalaxy(id)}
+      />
+    )
+  }
+
+  const server = servers.find((item) => item.id === galaxyId)
+  const channels = server
+    ? conversationsIn(conversations, server.id).sort(
+        (a, b) => Number(b.type === "INFO") - Number(a.type === "INFO"),
+      )
+    : []
   const privates = list("PRIVATE")
   const groups = list("GROUP")
 
@@ -71,7 +104,7 @@ export function ChatSidebar({
         )}
       >
         <div className="flex h-14 items-center justify-between border-b border-border px-4">
-          <Link href="/" className="text-xl font-bold font-sans text-primary">
+          <Link href="/" className="font-sans text-xl font-bold text-primary">
             Helix
           </Link>
           <ThemeToggle />
@@ -88,8 +121,36 @@ export function ChatSidebar({
             />
           )}
 
-          <SidebarSection title="Canaux" onAdd={user?.isAdmin ? onCreateChannel : undefined} />
-          {list("INFO", "PUBLIC").map((conversation) => entry(conversation))}
+          <SidebarSection
+            title={theme === "univers" ? "Galaxies" : "Serveurs"}
+            onAdd={user ? onCreateServer : undefined}
+          />
+          {servers.map((item) =>
+            galaxyEntry(item.id, item.name, <Orbit className="h-4 w-4 shrink-0" />),
+          )}
+          {user &&
+            galaxyEntry(
+              PERSONAL_GALAXY,
+              "Messages privés",
+              <MessageCircle className="h-4 w-4 shrink-0" />,
+            )}
+          {user && (
+            <SidebarButton
+              icon={<LogIn className="h-4 w-4 shrink-0" />}
+              label="Rejoindre un serveur"
+              onClick={onJoinServer}
+            />
+          )}
+
+          {server && (
+            <>
+              <SidebarSection
+                title={"Canaux · " + server.name}
+                onAdd={server.canManage ? onCreateChannel : undefined}
+              />
+              {channels.map((conversation) => entry(conversation))}
+            </>
+          )}
 
           {user && (
             <>
@@ -111,16 +172,7 @@ export function ChatSidebar({
 
         <div className="border-t border-border p-3">
           {user ? (
-            <div className="flex items-center gap-2">
-              <Avatar name={user.name} />
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">{user.name}</p>
-                {user.isAdmin && <p className="text-[11px] text-primary">Admin</p>}
-              </div>
-              <IconButton label="Se déconnecter" onClick={onSignOut} className="p-2">
-                <LogOut className="h-4 w-4" />
-              </IconButton>
-            </div>
+            <UserMenu user={user} onOpenSettings={onOpenSettings} onSignOut={onSignOut} />
           ) : (
             <div className="flex flex-col gap-2">
               <Button nativeButton={false} render={<Link href="/auth/connexion" />}>

@@ -13,6 +13,16 @@ export type ConversationItem = {
   accepted: boolean
   createdById: string | null
   memberCount: number
+  serverId: string | null
+}
+
+export type ServerItem = {
+  id: string
+  name: string
+  inviteCode: string
+  role: "OWNER" | "ADMIN" | "MEMBER" | null
+  canManage: boolean
+  memberCount: number
 }
 
 export type ReactionItem = {
@@ -27,6 +37,7 @@ export type MessageItem = {
   fileUrl: string | null
   fileName: string | null
   fileType: string | null
+  audioDuration: number | null
   createdAt: string
   sender: { id: string; name: string }
   reactions: ReactionItem[]

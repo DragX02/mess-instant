@@ -13,7 +13,6 @@ async function deleteUser(email: string) {
       process.exit(1)
     }
 
-    // Supprimer l'utilisateur (les relations en cascade vont aussi être supprimées)
     const deleted = await prisma.user.delete({
       where: { email },
     })

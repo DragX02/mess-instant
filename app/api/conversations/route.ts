@@ -1,11 +1,22 @@
 import { prisma } from "@/lib/prisma"
-import { areFriends, findPrivateConversation, getCurrentUser } from "@/lib/chat"
+import {
+  CHAMPS_UTILISATEUR,
+  DEFAULT_SERVER_ID,
+  areFriends,
+  canManageServer,
+  findPrivateConversation,
+  getCurrentUser,
+  nomAffiche,
+} from "@/lib/chat"
+import { erreur, nonConnecte } from "@/lib/reponses"
 
 export async function GET() {
   const user = await getCurrentUser()
 
   if (!user) {
-    const info = await prisma.conversation.findMany({ where: { type: "INFO" } })
+    const info = await prisma.conversation.findMany({
+      where: { type: "INFO", serverId: DEFAULT_SERVER_ID },
+    })
     const result = info.map((conversation) => ({
       id: conversation.id,
       type: conversation.type,
@@ -13,16 +24,20 @@ export async function GET() {
       accepted: true,
       createdById: null,
       memberCount: 0,
+      serverId: conversation.serverId,
     }))
     return Response.json(result)
   }
 
   const conversations = await prisma.conversation.findMany({
     where: {
-      OR: [{ type: "INFO" }, { type: "PUBLIC" }, { memberships: { some: { userId: user.id } } }],
+      OR: [
+        { server: { members: { some: { userId: user.id } } } },
+        { memberships: { some: { userId: user.id } } },
+      ],
     },
     include: {
-      memberships: { include: { user: { select: { id: true, name: true, email: true } } } },
+      memberships: { include: { user: { select: CHAMPS_UTILISATEUR } } },
     },
     orderBy: { createdAt: "asc" },
   })
@@ -32,7 +47,7 @@ export async function GET() {
 
     if (conversation.type === "PRIVATE") {
       const other = conversation.memberships.find((membership) => membership.userId !== user.id)
-      name = other ? other.user.name || other.user.email : "Conversation"
+      name = other ? nomAffiche(other.user) : "Conversation"
     }
 
     return {
@@ -42,6 +57,7 @@ export async function GET() {
       accepted: conversation.accepted,
       createdById: conversation.createdById,
       memberCount: conversation.memberships.length,
+      serverId: conversation.serverId,
     }
   })
 
@@ -52,29 +68,32 @@ export async function POST(request: Request) {
   const user = await getCurrentUser()
 
   if (!user) {
-    return Response.json({ error: "Vous devez être connecté." }, { status: 401 })
+    return nonConnecte()
   }
 
   const body = await request.json()
   const name = typeof body.name === "string" ? body.name.trim() : ""
 
   if (body.type === "PUBLIC") {
-    if (!user.isAdmin) {
-      return Response.json({ error: "Seul un admin peut créer un canal." }, { status: 403 })
+    const serverId = typeof body.serverId === "string" ? body.serverId : DEFAULT_SERVER_ID
+    const server = await prisma.server.findUnique({ where: { id: serverId } })
+
+    if (!server || !(await canManageServer(user, serverId))) {
+      return erreur("Seuls les admins du serveur peuvent créer un canal.", 403)
     }
     if (name === "") {
-      return Response.json({ error: "Le nom est obligatoire." }, { status: 400 })
+      return erreur("Le nom est obligatoire.", 400)
     }
 
     const channel = await prisma.conversation.create({
-      data: { type: "PUBLIC", name: name, createdById: user.id },
+      data: { type: "PUBLIC", name: name, createdById: user.id, serverId },
     })
     return Response.json({ id: channel.id })
   }
 
   if (body.type === "GROUP") {
     if (name === "") {
-      return Response.json({ error: "Le nom du groupe est obligatoire." }, { status: 400 })
+      return erreur("Le nom du groupe est obligatoire.", 400)
     }
 
     const memberIds: string[] = Array.isArray(body.memberIds) ? body.memberIds : []
@@ -112,13 +131,10 @@ export async function POST(request: Request) {
     }
 
     if (!target) {
-      return Response.json({ error: "Utilisateur introuvable." }, { status: 404 })
+      return erreur("Utilisateur introuvable.", 404)
     }
     if (target.id === user.id) {
-      return Response.json(
-        { error: "Vous ne pouvez pas vous écrire à vous-même." },
-        { status: 400 },
-      )
+      return erreur("Vous ne pouvez pas vous écrire à vous-même.", 400)
     }
 
     const existing = await findPrivateConversation(user.id, target.id)
@@ -139,5 +155,5 @@ export async function POST(request: Request) {
     return Response.json({ id: conversation.id })
   }
 
-  return Response.json({ error: "Type de conversation inconnu." }, { status: 400 })
+  return erreur("Type de conversation inconnu.", 400)
 }

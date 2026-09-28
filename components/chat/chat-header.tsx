@@ -1,33 +1,52 @@
 "use client"
 
-import { Menu, Trash2, Users } from "lucide-react"
-import type { ConversationItem, CurrentUser } from "@/lib/types"
+import { ChevronRight, LogOut, Menu, Plus, Trash2, UserPlus, Users } from "lucide-react"
+import type { ConversationItem, ServerItem } from "@/lib/types"
+import type { UiTheme } from "@/hooks/use-ui-theme"
+import { DEFAULT_SERVER_ID } from "@/lib/galaxies"
 import { Button } from "@/components/ui/button"
 import { IconButton } from "@/components/ui/icon-button"
 import { ConversationIcon } from "./conversation-icon"
 
 export function ChatHeader({
-  user,
-  conversation,
   showFriends,
+  galaxyName,
+  server,
+  conversation,
+  theme,
   onOpenSidebar,
+  onUniverse,
+  onGalaxy,
   onShowMembers,
   onDelete,
+  onInvite,
+  onCreateChannel,
+  onLeaveServer,
 }: {
-  user: CurrentUser | null
-  conversation: ConversationItem | undefined
   showFriends: boolean
+  galaxyName: string | null
+  server: ServerItem | undefined
+  conversation: ConversationItem | undefined
+  theme: UiTheme
   onOpenSidebar: () => void
+  onUniverse: () => void
+  onGalaxy: () => void
   onShowMembers: () => void
   onDelete: (question: string) => void
+  onInvite: () => void
+  onCreateChannel: () => void
+  onLeaveServer: () => void
 }) {
-  const isGroup = !showFriends && conversation?.type === "GROUP"
-  // Le canal « général » est créé automatiquement : on ne peut pas le supprimer.
+  const inGalaxy = !showFriends && galaxyName !== null && !conversation
+  const onPlanet = !showFriends && conversation !== undefined
+  const isGroup = onPlanet && conversation.type === "GROUP"
   const canDeleteChannel =
-    !showFriends &&
-    conversation?.type === "PUBLIC" &&
+    onPlanet &&
+    conversation.type === "PUBLIC" &&
     conversation.id !== "general" &&
-    Boolean(user?.isAdmin)
+    Boolean(server?.canManage)
+  const serverActions = inGalaxy && server?.role != null
+  const homeLabel = theme === "univers" ? "Univers" : "Serveurs"
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border px-4">
@@ -35,15 +54,70 @@ export function ChatHeader({
         <Menu className="h-5 w-5" />
       </IconButton>
 
-      {!showFriends && <ConversationIcon type={conversation?.type ?? "INFO"} />}
-      <h1 className="truncate font-semibold">
-        {showFriends ? "Amis" : conversation?.name || "info"}
-      </h1>
-      {isGroup && (
-        <span className="text-xs text-muted-foreground">{conversation.memberCount} membres</span>
+      {showFriends ? (
+        <h1 className="truncate font-semibold">Amis</h1>
+      ) : (
+        <nav aria-label="Fil d'Ariane" className="flex min-w-0 items-center gap-1">
+          {galaxyName === null ? (
+            <h1 className="truncate font-semibold">{homeLabel}</h1>
+          ) : (
+            <>
+              <button
+                onClick={onUniverse}
+                className="hidden shrink-0 text-sm text-muted-foreground hover:text-foreground sm:block"
+              >
+                {homeLabel}
+              </button>
+              <ChevronRight className="hidden h-4 w-4 shrink-0 text-muted-foreground sm:block" />
+              {conversation ? (
+                <>
+                  <button
+                    onClick={onGalaxy}
+                    className="truncate text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    {galaxyName}
+                  </button>
+                  <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+                  <ConversationIcon type={conversation.type} />
+                  <h1 className="truncate font-semibold">{conversation.name}</h1>
+                </>
+              ) : (
+                <h1 className="truncate font-semibold">{galaxyName}</h1>
+              )}
+            </>
+          )}
+        </nav>
       )}
 
-      <div className="ml-auto flex items-center gap-1">
+      {isGroup && (
+        <span className="shrink-0 text-xs text-muted-foreground">
+          {conversation.memberCount} membres
+        </span>
+      )}
+
+      <div className="ml-auto flex shrink-0 items-center gap-1">
+        {serverActions && (
+          <>
+            <Button variant="ghost" size="sm" onClick={onInvite}>
+              <UserPlus />
+              <span className="hidden sm:inline">Inviter</span>
+            </Button>
+            {server.canManage && (
+              <Button variant="ghost" size="sm" onClick={onCreateChannel}>
+                <Plus />
+                <span className="hidden sm:inline">Canal</span>
+              </Button>
+            )}
+            {server.id !== DEFAULT_SERVER_ID && (
+              <Button variant="destructive" size="sm" onClick={onLeaveServer}>
+                {server.role === "OWNER" ? <Trash2 /> : <LogOut />}
+                <span className="hidden sm:inline">
+                  {server.role === "OWNER" ? "Supprimer" : "Quitter"}
+                </span>
+              </Button>
+            )}
+          </>
+        )}
         {isGroup && (
           <>
             <Button variant="ghost" size="sm" onClick={onShowMembers}>

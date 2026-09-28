@@ -9,7 +9,6 @@ import { Logo } from "@/components/logo"
 export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Logo href="/" size="sm" withText />
@@ -31,7 +30,6 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Hero Section */}
       <section className="mx-auto max-w-6xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
         <div className="grid items-center gap-16 md:grid-cols-2">
           <div className="flex flex-col gap-8">
@@ -76,7 +74,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="border-t border-border bg-muted/30 py-16 md:py-24">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="mb-4 text-3xl font-bold font-sans md:text-4xl">
@@ -91,7 +88,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-border bg-background py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 sm:px-6 md:flex-row lg:px-8">
           <div className="text-lg font-bold font-sans text-primary">Helix</div>

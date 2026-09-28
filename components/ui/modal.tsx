@@ -3,7 +3,6 @@
 import { X } from "lucide-react"
 import { IconButton } from "@/components/ui/icon-button"
 
-/** Boîte de dialogue centrée, fermée au clic sur le fond ou sur la croix. */
 function Modal({
   title,
   onClose,

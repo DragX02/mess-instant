@@ -2,7 +2,6 @@ import { Plus } from "lucide-react"
 import { cn } from "cn"
 import { IconButton } from "@/components/ui/icon-button"
 
-/** Titre de section dans la barre latérale, avec un « + » optionnel. */
 function SidebarSection({ title, onAdd }: { title: string; onAdd?: () => void }) {
   return (
     <div className="mt-5 mb-1 flex items-center justify-between px-2">
@@ -18,7 +17,6 @@ function SidebarSection({ title, onAdd }: { title: string; onAdd?: () => void })
   )
 }
 
-/** Entrée cliquable de la barre latérale : icône, libellé et pastille optionnelle. */
 function SidebarButton({
   icon,
   label,
@@ -53,7 +51,6 @@ function SidebarButton({
   )
 }
 
-/** Message affiché quand une section est vide. */
 function SidebarEmpty({ children }: { children: React.ReactNode }) {
   return <p className="px-2 text-xs text-muted-foreground">{children}</p>
 }

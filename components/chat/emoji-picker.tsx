@@ -3,9 +3,7 @@
 import { cn } from "cn"
 
 const variants = {
-  /** Grille complète, pour le formulaire de message. */
   grid: "grid grid-cols-8 gap-1 p-2 text-xl sm:grid-cols-10",
-  /** Rangée compacte, pour les réactions rapides sous un message. */
   row: "flex w-fit gap-1 p-1 text-lg",
 }
 

@@ -11,7 +11,6 @@ const tones = {
   secondary: "bg-secondary text-secondary-foreground",
 }
 
-/** Pastille ronde affichant l'initiale d'une personne. */
 function Avatar({
   name,
   size = "md",

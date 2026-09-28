@@ -1,4 +1,5 @@
 import { Hash, Plus, Search, Send, Settings, Smile, Volume2 } from "lucide-react"
+import { Avatar } from "@/components/ui/avatar"
 
 const SERVERS = [
   { label: "H", active: true },
@@ -32,7 +33,6 @@ export function ChatPreview() {
       />
 
       <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-2xl ring-1 ring-foreground/5 -rotate-1 transition-transform duration-300 hover:rotate-0">
-        {/* Barre de titre */}
         <div className="flex items-center gap-1.5 border-b border-border bg-muted/40 px-4 py-3">
           <span className="h-2.5 w-2.5 rounded-full bg-destructive/50" />
           <span className="h-2.5 w-2.5 rounded-full bg-primary/50" />
@@ -41,7 +41,6 @@ export function ChatPreview() {
         </div>
 
         <div className="flex h-[420px]">
-          {/* Rail de serveurs */}
           <div className="flex w-14 flex-col items-center gap-2 border-r border-border bg-sidebar py-3">
             {SERVERS.map((server) => (
               <div key={server.label} className="relative flex items-center justify-center">
@@ -64,7 +63,6 @@ export function ChatPreview() {
             </div>
           </div>
 
-          {/* Liste des canaux */}
           <div className="hidden w-44 flex-col border-r border-border bg-muted/20 p-3 sm:flex">
             <div className="mb-3 flex items-center justify-between px-1">
               <span className="text-sm font-semibold">Équipe Helix</span>
@@ -108,9 +106,7 @@ export function ChatPreview() {
 
             <div className="mt-auto flex items-center gap-2 rounded-md bg-background/60 px-2 py-1.5">
               <div className="relative">
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-secondary text-[10px] font-semibold text-secondary-foreground">
-                  A
-                </div>
+                <Avatar name="Adrien" size="sm" className="h-6 w-6 text-[10px]" />
                 <span className="absolute -right-0.5 -bottom-0.5 h-2 w-2 rounded-full bg-primary ring-2 ring-background" />
               </div>
               <span className="text-[12px] font-medium">Adrien</span>
@@ -118,7 +114,6 @@ export function ChatPreview() {
             </div>
           </div>
 
-          {/* Zone de conversation */}
           <div className="flex flex-1 flex-col">
             <div className="flex items-center gap-2 border-b border-border px-4 py-3">
               <Hash className="h-4 w-4 text-muted-foreground" />
@@ -131,9 +126,7 @@ export function ChatPreview() {
               </p>
 
               <div className="flex items-start gap-2">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-primary-foreground">
-                  L
-                </div>
+                <Avatar name="Léa" size="sm" tone="primary" className="text-[11px]" />
                 <div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-[13px] font-semibold">Léa</span>
@@ -146,9 +139,7 @@ export function ChatPreview() {
               </div>
 
               <div className="flex items-start gap-2">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary text-[11px] font-semibold text-secondary-foreground">
-                  T
-                </div>
+                <Avatar name="Tom" size="sm" className="text-[11px]" />
                 <div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-[13px] font-semibold">Tom</span>

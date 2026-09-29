@@ -21,19 +21,21 @@ export function Logo({
   size = "md",
   className,
   withText = false,
+  withTextBelow = false,
   full = false,
 }: {
   href?: string
   size?: keyof typeof iconSizes
   className?: string
   withText?: boolean
+  withTextBelow?: boolean
   full?: boolean
 }) {
   const side = iconSizes[size]
 
   const icon = (
     <Image
-      src="/apple-touch-icon.png"
+      src="/android-chrome-512x512.png"
       alt="Helix"
       width={side}
       height={side}
@@ -55,6 +57,13 @@ export function Logo({
           className="h-auto w-auto"
           priority
         />
+      </div>
+    )
+  } else if (withTextBelow) {
+    content = (
+      <div className={cn("flex flex-col items-center gap-3", className)}>
+        {icon}
+        <span className={cn("font-bold font-sans text-primary", textSizes[size])}>Helix</span>
       </div>
     )
   } else if (withText) {

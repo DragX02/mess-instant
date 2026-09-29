@@ -36,12 +36,17 @@ export default async function ProfilePage() {
           {/* Page Title */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
-              <Link href="/discussion" className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
+              <Link
+                href="/discussion"
+                className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+              >
                 <ArrowLeft className="h-5 w-5" />
               </Link>
               <h1 className="text-3xl font-bold">Mon Profil</h1>
             </div>
-            <p className="text-muted-foreground">Gérez vos paramètres personnels et vos informations de compte</p>
+            <p className="text-muted-foreground">
+              Gérez vos paramètres personnels et vos informations de compte
+            </p>
           </div>
 
           <div className="space-y-6">
@@ -64,12 +69,16 @@ export default async function ProfilePage() {
                   <div>
                     <Label className="text-muted-foreground text-sm">Membre depuis</Label>
                     <p className="mt-2 font-medium">
-                      {user?.createdAt ? new Date(user.createdAt).toLocaleDateString("fr-FR") : "N/A"}
+                      {user?.createdAt
+                        ? new Date(user.createdAt).toLocaleDateString("fr-FR")
+                        : "N/A"}
                     </p>
                   </div>
                   <div>
                     <Label className="text-muted-foreground text-sm">Statut</Label>
-                    <p className="mt-2 font-medium">{user?.emailVerified ? "Vérifié" : "Non vérifié"}</p>
+                    <p className="mt-2 font-medium">
+                      {user?.emailVerified ? "Vérifié" : "Non vérifié"}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -85,11 +94,13 @@ export default async function ProfilePage() {
                 <CardDescription>Actions qui ne peuvent pas être annulées</CardDescription>
               </CardHeader>
               <CardContent>
-                <form action={async () => {
-                  "use server"
-                  await auth.api.signOut({ headers: await headers() })
-                  redirect("/")
-                }}>
+                <form
+                  action={async () => {
+                    "use server"
+                    await auth.api.signOut({ headers: await headers() })
+                    redirect("/")
+                  }}
+                >
                   <Button variant="destructive" className="w-full" type="submit">
                     Déconnexion
                   </Button>

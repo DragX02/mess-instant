@@ -7,6 +7,7 @@ export function usePolling(
   intervalMs: number,
   deps: DependencyList,
 ) {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     let active = true
     const isActive = () => active

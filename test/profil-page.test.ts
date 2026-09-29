@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest"
+import { describe, it } from "vitest"
 
 describe("Profile Page (app/profil/page.tsx)", () => {
   describe("Authentication", () => {

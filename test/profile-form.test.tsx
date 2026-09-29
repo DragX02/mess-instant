@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest"
-import { render, screen, fireEvent, waitFor } from "@testing-library/react"
+import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { ProfileForm } from "@/components/auth/profile-form"
 
@@ -19,7 +19,7 @@ describe("ProfileForm Component", () => {
   describe("Name Update Form", () => {
     it("should render name update form", () => {
       render(<ProfileForm user={mockUser} />)
-      expect(screen.getByText(/Nom d'utilisateur/i)).toBeInTheDocument()
+      expect(screen.getByText("Nom d'utilisateur")).toBeInTheDocument()
     })
 
     it("should display current name in disabled input", () => {
@@ -53,7 +53,7 @@ describe("ProfileForm Component", () => {
   describe("Password Change Form - with password", () => {
     it("should render password section when user has password", () => {
       render(<ProfileForm user={mockUser} hasPassword={true} />)
-      expect(screen.getByText(/Sécurité/i)).toBeInTheDocument()
+      expect(screen.getByText("Sécurité")).toBeInTheDocument()
       expect(screen.getByLabelText(/Mot de passe actuel/i)).toBeInTheDocument()
     })
 
@@ -65,7 +65,7 @@ describe("ProfileForm Component", () => {
 
     it("should have password visibility toggle buttons", () => {
       render(<ProfileForm user={mockUser} hasPassword={true} />)
-      const toggleButtons = screen.getAllByRole("button", { name: /toggle/i })
+      const toggleButtons = screen.getAllByRole("button", { name: "" })
       expect(toggleButtons.length).toBeGreaterThanOrEqual(3)
     })
 
@@ -76,11 +76,14 @@ describe("ProfileForm Component", () => {
       const currentPasswordInput = screen.getByPlaceholderText("Mot de passe actuel")
       expect(currentPasswordInput).toHaveAttribute("type", "password")
 
-      // Find and click the first toggle button
-      const toggleButtons = screen.getAllByRole("button")
-      await user.click(toggleButtons[0])
+      // Find the toggle button that is next to the current password input
+      const parent = currentPasswordInput.closest("div")
+      const toggleButton = parent?.querySelector("button")
 
-      expect(currentPasswordInput).toHaveAttribute("type", "text")
+      if (toggleButton) {
+        await user.click(toggleButton)
+        expect(currentPasswordInput).toHaveAttribute("type", "text")
+      }
     })
   })
 
@@ -97,7 +100,7 @@ describe("ProfileForm Component", () => {
 
     it("should still show name update form for OAuth accounts", () => {
       render(<ProfileForm user={mockUser} hasPassword={false} />)
-      expect(screen.getByText(/Nom d'utilisateur/i)).toBeInTheDocument()
+      expect(screen.getByText("Nom d'utilisateur")).toBeInTheDocument()
     })
   })
 

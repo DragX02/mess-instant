@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from "vitest"
+import { describe, it } from "vitest"
 
 describe("POST /api/change-password", () => {
   describe("Authentication", () => {

@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { render, screen } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
 import { GoogleButton } from "@/components/auth/google-button"
 import { AuthCard } from "@/components/auth/auth-card"
 
@@ -37,8 +36,7 @@ describe("GoogleButton Component", () => {
   })
 
   it("should show loading label while loading", async () => {
-    const user = userEvent.setup()
-    const { rerender } = render(<GoogleButton loadingLabel="Connexion..." />)
+    render(<GoogleButton loadingLabel="Connexion..." />)
 
     const button = screen.getByRole("button")
     expect(screen.getByText("Google")).toBeInTheDocument()

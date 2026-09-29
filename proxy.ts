@@ -14,7 +14,7 @@ export async function proxy(request: NextRequest) {
   const session = await auth.api.getSession({ headers: await headers() })
   const { pathname } = request.nextUrl
 
-  if (pathname.startsWith("/discussion")) {
+  if (pathname.startsWith("/discussion") || pathname.startsWith("/profil")) {
     if (!session) {
       return NextResponse.redirect(new URL("/auth/connexion", request.url))
     }
@@ -29,5 +29,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/discussion/:path*", "/auth/:path*"],
+  matcher: ["/discussion/:path*", "/profil/:path*", "/auth/:path*"],
 }

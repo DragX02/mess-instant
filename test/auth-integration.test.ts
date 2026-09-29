@@ -72,9 +72,9 @@ describe("Auth Integration Tests", () => {
 
     it("should detect mismatched passwords", () => {
       const password = "StrongPass123!"
-      const confirm = "StrongPass124!"
+      const confirmPassword = password.slice(0, -2) + "24!"
 
-      expect(password === confirm).toBe(false)
+      expect(password === confirmPassword).toBe(false)
     })
   })
 

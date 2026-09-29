@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronUp, LogOut, Settings } from "lucide-react"
+import Link from "next/link"
+import { ChevronUp, LogOut, Settings, User } from "lucide-react"
 import type { CurrentUser } from "@/lib/types"
 import { Avatar } from "@/components/ui/avatar"
 
@@ -27,6 +28,14 @@ export function UserMenu({
 
       {open && (
         <div className="absolute bottom-full left-0 z-50 mb-2 w-full overflow-hidden rounded-lg border border-border bg-card p-1 shadow-xl">
+          <Link
+            href="/profil"
+            onClick={() => setOpen(false)}
+            className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-muted"
+          >
+            <User className="h-4 w-4 shrink-0" />
+            Profil
+          </Link>
           <button
             type="button"
             onClick={() => choose(onOpenSettings)}

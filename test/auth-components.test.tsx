@@ -66,7 +66,7 @@ describe("AuthCard Component", () => {
     render(
       <AuthCard title="Connexion" description="Connectez-vous">
         <div data-testid="child">Test content</div>
-      </AuthCard>
+      </AuthCard>,
     )
     expect(screen.getByTestId("child")).toBeInTheDocument()
   })
@@ -75,7 +75,7 @@ describe("AuthCard Component", () => {
     render(
       <AuthCard title="Connexion" description="Bienvenue">
         <div>Content</div>
-      </AuthCard>
+      </AuthCard>,
     )
     expect(screen.getByText("Connexion")).toBeInTheDocument()
   })
@@ -84,7 +84,7 @@ describe("AuthCard Component", () => {
     render(
       <AuthCard title="Connexion" description="Connectez-vous à votre compte">
         <div>Content</div>
-      </AuthCard>
+      </AuthCard>,
     )
     expect(screen.getByText("Connectez-vous à votre compte")).toBeInTheDocument()
   })
@@ -93,7 +93,7 @@ describe("AuthCard Component", () => {
     const { container } = render(
       <AuthCard title="Connexion" description="Bienvenue">
         <div>Content</div>
-      </AuthCard>
+      </AuthCard>,
     )
     // Logo is rendered in the header
     expect(container.querySelector("img")).toBeInTheDocument()
@@ -103,7 +103,7 @@ describe("AuthCard Component", () => {
     const { container } = render(
       <AuthCard title="Connexion" description="Bienvenue">
         <div>Content</div>
-      </AuthCard>
+      </AuthCard>,
     )
     // Card component creates a section/div with specific styling
     const card = container.querySelector("div[class*='rounded']")

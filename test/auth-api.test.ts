@@ -10,7 +10,8 @@ vi.mock("next/navigation", () => ({
 describe("Auth API Routes", () => {
   describe("GET /api/auth/error", () => {
     it("should parse error parameters from query string", () => {
-      const url = "http://localhost:3000/api/auth/error?error=access_denied&error_description=User%20denied%20access"
+      const url =
+        "http://localhost:3000/api/auth/error?error=access_denied&error_description=User%20denied%20access"
       const { searchParams } = new URL(url)
 
       const error = searchParams.get("error")

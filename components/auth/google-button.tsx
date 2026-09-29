@@ -10,7 +10,7 @@ export function GoogleButton({ loadingLabel }: { loadingLabel: string }) {
 
   async function handleClick() {
     setLoading(true)
-    await authClient.signIn.social({ provider: "google", callbackURL: "/dashboard" })
+    await authClient.signIn.social({ provider: "google", callbackURL: "/discussion" })
   }
 
   return (

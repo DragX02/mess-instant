@@ -52,7 +52,7 @@ export default function InscriptionPage() {
       return
     }
 
-    router.push("/dashboard")
+    router.push("/discussion")
   }
 
   return (

@@ -27,7 +27,7 @@ export default function ConnexionPage() {
     const { error: signInError } = await authClient.signIn.email({
       email,
       password,
-      callbackURL: "/dashboard",
+      callbackURL: "/discussion",
     })
 
     setLoading(false)
@@ -37,7 +37,7 @@ export default function ConnexionPage() {
       return
     }
 
-    router.push("/dashboard")
+    router.push("/discussion")
   }
 
   return (

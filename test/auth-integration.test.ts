@@ -28,11 +28,7 @@ describe("Auth Integration Tests", () => {
 
   describe("Error Handling Flow", () => {
     it("should handle authentication errors consistently", () => {
-      const authErrors = [
-        "Invalid email or password",
-        "User not found",
-        "Email not verified",
-      ]
+      const authErrors = ["Invalid email or password", "User not found", "Email not verified"]
 
       authErrors.forEach((error) => {
         const translated = translateError(error)
@@ -80,11 +76,7 @@ describe("Auth Integration Tests", () => {
 
   describe("Email Validation", () => {
     it("should identify valid email formats", () => {
-      const validEmails = [
-        "user@example.com",
-        "test@domain.co.uk",
-        "name.surname@company.org",
-      ]
+      const validEmails = ["user@example.com", "test@domain.co.uk", "name.surname@company.org"]
 
       validEmails.forEach((email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -93,12 +85,7 @@ describe("Auth Integration Tests", () => {
     })
 
     it("should identify invalid email formats", () => {
-      const invalidEmails = [
-        "notanemail",
-        "@example.com",
-        "user@",
-        "user @example.com",
-      ]
+      const invalidEmails = ["notanemail", "@example.com", "user@", "user @example.com"]
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -110,14 +97,7 @@ describe("Auth Integration Tests", () => {
 
   describe("Form State Management", () => {
     it("should track password strength as user types", () => {
-      const passwords = [
-        "a",
-        "ab",
-        "Ab1",
-        "Ab1!",
-        "Ab1!@",
-        "StrongPass123!",
-      ]
+      const passwords = ["a", "ab", "Ab1", "Ab1!", "Ab1!@", "StrongPass123!"]
 
       const results = passwords.map((pwd) => validatePasswordStrength(pwd))
 

@@ -55,7 +55,11 @@ describe("PasswordStrengthMeter Component", () => {
     const { rerender } = render(<PasswordStrengthMeter strength={EMPTY_PASSWORD_STRENGTH} />)
 
     // Weak password
-    rerender(<PasswordStrengthMeter strength={{ score: 0, level: "weak", feedback: [], isValid: false }} />)
+    rerender(
+      <PasswordStrengthMeter
+        strength={{ score: 0, level: "weak", feedback: [], isValid: false }}
+      />,
+    )
     const meter = document.querySelector(".h-full.transition-all") as HTMLElement
     expect(meter).toHaveClass("bg-destructive")
 
@@ -63,7 +67,7 @@ describe("PasswordStrengthMeter Component", () => {
     rerender(
       <PasswordStrengthMeter
         strength={{ score: 5, level: "strong", feedback: [], isValid: true }}
-      />
+      />,
     )
     expect(meter).toHaveClass("bg-green-500")
   })
@@ -77,7 +81,7 @@ describe("PasswordStrengthMeter Component", () => {
           feedback: ["Minimum 8 caractères", "Au moins une majuscule"],
           isValid: false,
         }}
-      />
+      />,
     )
 
     expect(screen.getByText("Minimum 8 caractères")).toBeInTheDocument()
@@ -93,7 +97,7 @@ describe("PasswordStrengthMeter Component", () => {
           feedback: [],
           isValid: true,
         }}
-      />
+      />,
     )
 
     expect(screen.getByText("✓ Mot de passe fort")).toBeInTheDocument()
@@ -105,7 +109,7 @@ describe("PasswordStrengthMeter Component", () => {
     expect(screen.getByText("Faible")).toBeInTheDocument()
 
     rerender(
-      <PasswordStrengthMeter strength={{ score: 3, level: "good", feedback: [], isValid: true }} />
+      <PasswordStrengthMeter strength={{ score: 3, level: "good", feedback: [], isValid: true }} />,
     )
     expect(screen.getByText("Bon")).toBeInTheDocument()
   })

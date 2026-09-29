@@ -146,7 +146,9 @@ describe("Inscription Page", () => {
 
   it("should render description", () => {
     render(<InscriptionPage />)
-    expect(screen.getByText("Rejoignez votre équipe sur Helix en quelques secondes.")).toBeInTheDocument()
+    expect(
+      screen.getByText("Rejoignez votre équipe sur Helix en quelques secondes."),
+    ).toBeInTheDocument()
   })
 
   it("should have password fields", () => {

@@ -70,13 +70,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log(`Found account for user ${session.user.id}:`, {
-      providerId: account.providerId,
-      accountId: account.accountId,
-      passwordLength: account.password?.length,
-      passwordStarts: account.password?.substring(0, 6),
-    })
-
     // Verify current password using better-auth's crypto
     let isPasswordValid = false
     try {
@@ -84,7 +77,6 @@ export async function POST(request: NextRequest) {
         hash: account.password,
         password: currentPassword,
       })
-      console.log(`Password validation for user ${session.user.id}: ${isPasswordValid}`)
     } catch (compareError) {
       console.error(`Password verify error for user ${session.user.id}:`, compareError)
       return NextResponse.json({ message: "Mot de passe actuel incorrect" }, { status: 401 })

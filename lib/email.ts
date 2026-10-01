@@ -24,12 +24,17 @@ export async function sendVerificationEmail(to: string, url: string) {
 
   const emailHtml = await render(VerificationEmail({ verificationUrl: url }))
 
-  await getResend().emails.send({
+  const { error } = await getResend().emails.send({
     from: FROM_EMAIL,
     to,
     subject: "Vérifiez votre adresse email - Helix",
     html: emailHtml,
   })
+
+  if (error) {
+    console.error("[resend] Erreur envoi vérification:", error)
+    throw new Error(error.message)
+  }
 }
 
 export async function sendResetPasswordEmail(to: string, url: string) {
@@ -40,10 +45,15 @@ export async function sendResetPasswordEmail(to: string, url: string) {
 
   const emailHtml = await render(ResetPasswordEmail({ resetUrl: url }))
 
-  await getResend().emails.send({
+  const { error } = await getResend().emails.send({
     from: FROM_EMAIL,
     to,
     subject: "Réinitialiser votre mot de passe - Helix",
     html: emailHtml,
   })
+
+  if (error) {
+    console.error("[resend] Erreur envoi réinitialisation:", error)
+    throw new Error(error.message)
+  }
 }

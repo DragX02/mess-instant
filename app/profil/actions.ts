@@ -22,35 +22,43 @@ export async function updateProfileName(newName: string) {
     throw new Error("Le nom ne peut pas être vide")
   }
 
+  if (newName.length > 50) {
+    throw new Error("Le nom doit faire moins de 50 caractères")
+  }
+
   // Import Prisma for database update
   const { prisma } = await import("@/lib/prisma")
 
-  try {
-    // Update user in database
-    await prisma.user.update({
-      where: { id: session.user.id },
-      data: { name: newName },
-    })
+  // Update user in database
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { name: newName.trim() },
+  })
 
-    // Send confirmation email
+  // Send confirmation email (non-blocking)
+  try {
     const emailHtml = await render(
       ProfileUpdateEmail({
         newName,
       }),
     )
 
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: session.user.email,
       subject: "Modification de votre nom - Helix",
       html: emailHtml,
     })
 
-    revalidatePath("/profil")
-    return { success: true, message: "Profil mis à jour" }
-  } catch {
-    throw new Error("Erreur lors de l'envoi de l'email")
+    if (error) {
+      console.error("[resend] Erreur envoi update profil:", error)
+    }
+  } catch (emailError) {
+    console.error("Erreur lors de l'envoi du mail update profil:", emailError)
   }
+
+  revalidatePath("/profil")
+  return { success: true, message: "Profil mis à jour" }
 }
 
 export async function changePassword(
@@ -84,45 +92,46 @@ export async function changePassword(
     throw new Error("Le nouveau mot de passe doit être différent de l'actuel")
   }
 
-  try {
-    // Call API route to change password
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/change-password`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Cookie: (await headers()).get("cookie") || "",
-        },
-        body: JSON.stringify({
-          currentPassword,
-          newPassword,
-          confirmPassword,
-        }),
+  // Call API route to change password
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/change-password`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: (await headers()).get("cookie") || "",
       },
-    )
+      body: JSON.stringify({
+        currentPassword,
+        newPassword,
+        confirmPassword,
+      }),
+    },
+  )
 
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.message || "Erreur lors du changement de mot de passe")
-    }
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message || "Erreur lors du changement de mot de passe")
+  }
 
-    // Send confirmation email
+  // Send confirmation email (non-blocking)
+  try {
     const emailHtml = await render(PasswordChangeEmail())
 
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: session.user.email,
       subject: "Changement de votre mot de passe - Helix",
       html: emailHtml,
     })
 
-    revalidatePath("/profil")
-    return { success: true, message: "Mot de passe changé" }
-  } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Erreur lors du changement de mot de passe"
-    console.error("Erreur lors du changement de mot de passe:", error)
-    throw new Error(errorMessage)
+    if (error) {
+      console.error("[resend] Erreur envoi change password:", error)
+    }
+  } catch (emailError) {
+    console.error("Erreur lors de l'envoi du mail change password:", emailError)
   }
+
+  revalidatePath("/profil")
+  return { success: true, message: "Mot de passe changé" }
 }

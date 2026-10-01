@@ -3,6 +3,7 @@ import { join } from "path"
 
 export async function GET() {
   try {
+    // Use logo-full.png (207 KB) for better quality
     const logoPath = join(process.cwd(), "public", "logo-full.png")
     const imageBuffer = readFileSync(logoPath)
 

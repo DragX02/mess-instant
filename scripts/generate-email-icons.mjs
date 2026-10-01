@@ -5,7 +5,16 @@ import { mkdirSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import { createElement } from "react"
 import { renderToStaticMarkup } from "react-dom/server"
-import { Lock, Mail, ShieldCheck, User, Clock, Users, TriangleAlert, PartyPopper } from "lucide-react"
+import {
+  Lock,
+  Mail,
+  ShieldCheck,
+  User,
+  Clock,
+  Users,
+  TriangleAlert,
+  PartyPopper,
+} from "lucide-react"
 import sharp from "sharp"
 
 const ACCENT = "#F2704B"
@@ -17,7 +26,15 @@ const svgOf = (Icon, size, strokeWidth) =>
   renderToStaticMarkup(createElement(Icon, { size, color: ACCENT, strokeWidth }))
 
 // Pastille ronde de 60px, exportée en 120px (écrans retina)
-const badges = { lock: Lock, mail: Mail, "shield-check": ShieldCheck, user: User, users: Users, alert: TriangleAlert, party: PartyPopper }
+const badges = {
+  lock: Lock,
+  mail: Mail,
+  "shield-check": ShieldCheck,
+  user: User,
+  users: Users,
+  alert: TriangleAlert,
+  party: PartyPopper,
+}
 // Petites icônes en ligne de 16px, exportées en 48px
 const inline = { clock: Clock }
 

@@ -5,6 +5,7 @@ import {
   Head,
   Hr,
   Html,
+  Img,
   Link,
   Preview,
   Section,
@@ -28,8 +29,7 @@ export const VerificationEmail = ({ verificationUrl }: VerificationEmailProps) =
       <Container style={container}>
         {/* Header */}
         <Section style={header}>
-          <Text style={headerTitle}>Helix</Text>
-          <Text style={headerSubtitle}>Messagerie temps réel B2B</Text>
+          <Img src="https://helix.app/logo-full.png" alt="Helix" style={headerLogo} />
         </Section>
 
         {/* Content */}
@@ -117,27 +117,17 @@ const container = {
 const header = {
   background: "linear-gradient(135deg, #df6035 0%, #e05d38 100%)",
   color: "white",
-  padding: "56px 40px",
+  padding: "40px 40px 32px 40px",
   textAlign: "center" as const,
 }
 
-const headerTitle = {
-  margin: "0",
-  fontSize: "32px",
-  fontWeight: "700" as const,
-  letterSpacing: "-0.5px",
-  color: "white",
-  fontFamily: "Outfit",
+const headerLogo = {
+  maxWidth: "220px",
+  height: "auto",
+  margin: "0 auto",
 }
 
-const headerSubtitle = {
-  fontSize: "14px",
-  opacity: 0.95,
-  fontWeight: "500" as const,
-  margin: "8px 0 0 0",
-  color: "white",
-  fontFamily: "Outfit",
-}
+
 
 const content = {
   padding: "56px 40px",
@@ -229,11 +219,10 @@ const infoBoxText = {
 }
 
 const actionBox = {
-  backgroundColor: "#fafbfc",
-  border: "2px solid #d6e4f0",
-  padding: "24px",
-  borderRadius: "12px",
-  margin: "32px 0",
+  backgroundColor: "#e8f2f9",
+  padding: "20px",
+  margin: "32px 0 24px 0",
+  borderRadius: "8px",
 }
 
 const actionLabel = {

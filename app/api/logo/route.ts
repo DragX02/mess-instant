@@ -12,7 +12,9 @@ export async function GET() {
       headers: {
         "Content-Type": "image/png",
         "Content-Length": imageBuffer.length.toString(),
-        "Cache-Control": "public, max-age=86400", // 24h cache
+        "Content-Disposition": "inline; filename=helix-logo.png",
+        "Cache-Control": "public, max-age=2592000, immutable",
+        ETag: `"logo-${imageBuffer.length}"`,
         "Access-Control-Allow-Origin": "*",
       },
     })

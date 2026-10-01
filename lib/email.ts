@@ -1,7 +1,6 @@
 import { Resend } from "resend"
 import { render } from "@react-email/components"
-import { VerificationEmail } from "@/emails/verification-email"
-import { ResetPasswordEmail } from "@/emails/reset-password-email"
+import { VerificationEmailDark, ResetPasswordEmailDark } from "@/emails/templates"
 
 let resend: Resend | undefined
 
@@ -22,7 +21,7 @@ export async function sendVerificationEmail(to: string, url: string) {
     return
   }
 
-  const emailHtml = await render(VerificationEmail({ verificationUrl: url }))
+  const emailHtml = await render(VerificationEmailDark({ verificationUrl: url }))
 
   const { error } = await getResend().emails.send({
     from: FROM_EMAIL,
@@ -43,7 +42,7 @@ export async function sendResetPasswordEmail(to: string, url: string) {
     return
   }
 
-  const emailHtml = await render(ResetPasswordEmail({ resetUrl: url }))
+  const emailHtml = await render(ResetPasswordEmailDark({ resetUrl: url }))
 
   const { error } = await getResend().emails.send({
     from: FROM_EMAIL,

@@ -5,8 +5,7 @@ import { headers } from "next/headers"
 import { revalidatePath } from "next/cache"
 import { Resend } from "resend"
 import { render } from "@react-email/components"
-import { ProfileUpdateEmail } from "@/emails/profile-update"
-import { PasswordChangeEmail } from "@/emails/password-change"
+import { ProfileUpdateEmailDark, PasswordChangeEmailDark } from "@/emails/templates"
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev"
@@ -38,7 +37,7 @@ export async function updateProfileName(newName: string) {
   // Send confirmation email (non-blocking)
   try {
     const emailHtml = await render(
-      ProfileUpdateEmail({
+      ProfileUpdateEmailDark({
         newName,
       }),
     )
@@ -116,7 +115,7 @@ export async function changePassword(
 
   // Send confirmation email (non-blocking)
   try {
-    const emailHtml = await render(PasswordChangeEmail())
+    const emailHtml = await render(PasswordChangeEmailDark())
 
     const { error } = await resend.emails.send({
       from: FROM_EMAIL,

@@ -5,11 +5,11 @@ import {
   Head,
   Hr,
   Html,
-  Img,
   Link,
   Preview,
   Section,
   Text,
+  Img,
 } from "@react-email/components"
 import * as React from "react"
 
@@ -29,7 +29,18 @@ export const ResetPasswordEmail = ({ resetUrl }: ResetPasswordEmailProps) => (
       <Container style={container}>
         {/* Header */}
         <Section style={header}>
-          <Img src="https://helix.app/logo-full.png" alt="Helix" style={headerLogo} />
+          <Img
+            src="https://helix.app/logo-full.png"
+            alt="Helix"
+            width={180}
+            height={72}
+            style={{
+              display: "block",
+              margin: "0 auto",
+              maxWidth: "100%",
+              height: "auto",
+            }}
+          />
         </Section>
 
         {/* Content */}
@@ -139,12 +150,23 @@ const header = {
   textAlign: "center" as const,
 }
 
-const headerLogo = {
-  maxWidth: "220px",
-  height: "auto",
-  margin: "0 auto",
+const logoText = {
+  fontSize: "32px",
+  fontWeight: "700" as const,
+  color: "white",
+  margin: "0",
+  fontFamily: "Outfit, sans-serif",
+  letterSpacing: "-1px",
 }
 
+const logoSubtext = {
+  fontSize: "12px",
+  color: "rgba(255,255,255,0.9)",
+  margin: "4px 0 0 0",
+  fontFamily: "Outfit, sans-serif",
+  letterSpacing: "2px",
+  fontWeight: "500" as const,
+}
 
 const content = {
   padding: "56px 40px",

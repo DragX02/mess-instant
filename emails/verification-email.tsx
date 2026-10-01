@@ -29,7 +29,18 @@ export const VerificationEmail = ({ verificationUrl }: VerificationEmailProps) =
       <Container style={container}>
         {/* Header */}
         <Section style={header}>
-          <Img src="https://helix.app/logo-full.png" alt="Helix" style={headerLogo} />
+          <Img
+            src="https://helix.app/logo-full.png"
+            alt="Helix"
+            width={180}
+            height={72}
+            style={{
+              display: "block",
+              margin: "0 auto",
+              maxWidth: "100%",
+              height: "auto",
+            }}
+          />
         </Section>
 
         {/* Content */}
@@ -120,14 +131,6 @@ const header = {
   padding: "40px 40px 32px 40px",
   textAlign: "center" as const,
 }
-
-const headerLogo = {
-  maxWidth: "220px",
-  height: "auto",
-  margin: "0 auto",
-}
-
-
 
 const content = {
   padding: "56px 40px",

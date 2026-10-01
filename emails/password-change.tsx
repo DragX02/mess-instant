@@ -17,7 +17,11 @@ interface PasswordChangeEmailProps {
 
 export const PasswordChangeEmail = ({}: PasswordChangeEmailProps = {}) => (
   <Html>
-    <Head />
+    <Head>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+      `}</style>
+    </Head>
     <Preview>Votre mot de passe a été modifié avec succès</Preview>
     <Body style={main}>
       <Container style={container}>
@@ -30,12 +34,17 @@ export const PasswordChangeEmail = ({}: PasswordChangeEmailProps = {}) => (
         {/* Content */}
         <Section style={content}>
           <Text style={contentTitle}>Mot de passe modifié 🔐</Text>
-          <Text style={paragraph}>Votre mot de passe a été changé avec succès.</Text>
 
-          {/* Success Box */}
+          {/* Confirmation Box */}
+          <Section style={confirmationBox}>
+            <Text style={confirmationIcon}>✓</Text>
+            <Text style={confirmationText}>Votre mot de passe a été changé avec succès.</Text>
+          </Section>
+
+          {/* Details Box */}
           <Section style={successBox}>
             <Text style={successBoxText}>
-              Votre compte est maintenant sécurisé avec votre nouveau mot de passe.
+              🛡️ Votre compte est maintenant sécurisé avec votre nouveau mot de passe.
             </Text>
           </Section>
 
@@ -81,11 +90,10 @@ PasswordChangeEmail.PreviewProps = {
 
 export default PasswordChangeEmail
 
-// Styles
+// Styles - Match site design (Helix)
 const main = {
   backgroundColor: "#e8ebed",
-  fontFamily:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif',
+  fontFamily: "Outfit, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
   lineHeight: "1.6",
   color: "#333333",
   margin: "0",
@@ -98,82 +106,105 @@ const container = {
   marginTop: "24px",
   marginBottom: "24px",
   backgroundColor: "#ffffff",
-  borderRadius: "12px",
-  boxShadow: "0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)",
+  borderRadius: "8px",
+  boxShadow: "0px 1px 3px 0px rgba(26, 26, 26, 0.1), 0px 1px 2px -1px rgba(26, 26, 26, 0.1)",
   overflow: "hidden" as const,
 }
 
 const header = {
   background: "linear-gradient(135deg, #df6035 0%, #e05d38 100%)",
   color: "white",
-  padding: "60px 40px",
+  padding: "56px 40px",
   textAlign: "center" as const,
 }
 
 const headerTitle = {
   margin: "0",
-  fontSize: "36px",
+  fontSize: "32px",
   fontWeight: "700" as const,
   letterSpacing: "-0.5px",
   color: "white",
+  fontFamily: "Outfit",
 }
 
 const headerSubtitle = {
   fontSize: "14px",
   opacity: 0.95,
-  fontWeight: "400" as const,
+  fontWeight: "500" as const,
   margin: "8px 0 0 0",
   color: "white",
+  fontFamily: "Outfit",
 }
 
 const content = {
-  padding: "48px 40px",
+  padding: "56px 40px",
   backgroundColor: "#ffffff",
 }
 
 const contentTitle = {
-  fontSize: "24px",
+  fontSize: "28px",
   fontWeight: "700" as const,
-  marginBottom: "20px",
+  marginBottom: "24px",
   color: "#2f4b79",
-  margin: "0 0 20px 0",
-}
-
-const paragraph = {
-  margin: "16px 0",
-  fontSize: "15px",
-  lineHeight: "1.7",
-  color: "#555555",
+  margin: "0 0 24px 0",
+  fontFamily: "Outfit",
 }
 
 const successBox = {
-  backgroundColor: "#dcfce7",
-  borderLeft: "4px solid #22c55e",
+  backgroundColor: "#d6e4f0",
+  border: "1px solid #b8d5e8",
   padding: "20px",
-  borderRadius: "6px",
-  margin: "24px 0",
+  borderRadius: "8px",
+  margin: "32px 0",
 }
 
 const successBoxText = {
   margin: "0",
-  color: "#166534",
+  color: "#2f4b79",
   fontSize: "14px",
   fontWeight: "500" as const,
+  fontFamily: "Outfit",
+}
+
+const confirmationBox = {
+  backgroundColor: "#d6e4f0",
+  border: "2px solid #b8d5e8",
+  padding: "24px",
+  borderRadius: "12px",
+  margin: "28px 0",
+  textAlign: "center" as const,
+}
+
+const confirmationIcon = {
+  display: "block",
+  fontSize: "32px",
+  margin: "0 0 12px 0",
+  color: "#2f4b79",
+  fontWeight: "700" as const,
+}
+
+const confirmationText = {
+  fontSize: "16px",
+  fontWeight: "600" as const,
+  color: "#2f4b79",
+  margin: "0",
+  fontFamily: "Outfit",
 }
 
 const warningBox = {
   backgroundColor: "#fef3c7",
-  borderLeft: "4px solid #f59e0b",
+  border: "1px solid #fde68a",
   padding: "20px",
-  borderRadius: "6px",
-  margin: "24px 0",
+  borderRadius: "8px",
+  margin: "32px 0",
 }
 
 const warningBoxTitle = {
   margin: "0",
   color: "#92400e",
   fontSize: "14px",
-  fontWeight: "500" as const,
+  fontWeight: "600" as const,
+  fontFamily: "Outfit",
 }
 
 const warningBoxText = {
@@ -181,14 +212,15 @@ const warningBoxText = {
   color: "#92400e",
   fontSize: "14px",
   fontWeight: "500" as const,
+  fontFamily: "Outfit",
 }
 
 const infoBox = {
-  backgroundColor: "#d6e4f0",
-  borderLeft: "4px solid #2f4b79",
+  backgroundColor: "#f0f4f8",
+  border: "1px solid #d6e4f0",
   padding: "20px",
-  borderRadius: "6px",
-  margin: "24px 0",
+  borderRadius: "8px",
+  margin: "32px 0",
 }
 
 const infoBoxText = {
@@ -196,11 +228,15 @@ const infoBoxText = {
   color: "#2f4b79",
   fontSize: "14px",
   fontWeight: "500" as const,
+  fontFamily: "Outfit",
 }
 
 const divider = {
   borderColor: "#d6e4f0",
-  margin: "28px 0",
+  margin: "32px 0",
+  border: "none",
+  borderTop: "1px solid #d6e4f0",
+  height: "0",
 }
 
 const footer = {
@@ -216,16 +252,19 @@ const footerLogo = {
   color: "#df6035",
   marginBottom: "12px",
   margin: "0 0 12px 0",
+  fontFamily: "Outfit",
 }
 
 const footerText = {
   margin: "6px 0",
   fontSize: "13px",
   color: "#6b7280",
+  fontFamily: "Outfit",
 }
 
 const footerLink = {
   color: "#2f4b79",
   textDecoration: "none",
-  fontWeight: "500" as const,
+  fontWeight: "600" as const,
+  fontFamily: "Outfit",
 }

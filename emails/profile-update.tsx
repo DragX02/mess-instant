@@ -17,7 +17,11 @@ interface ProfileUpdateEmailProps {
 
 export const ProfileUpdateEmail = ({ newName }: ProfileUpdateEmailProps) => (
   <Html>
-    <Head />
+    <Head>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+      `}</style>
+    </Head>
     <Preview>Votre nom d&apos;utilisateur a été modifié avec succès</Preview>
     <Body style={main}>
       <Container style={container}>
@@ -30,20 +34,24 @@ export const ProfileUpdateEmail = ({ newName }: ProfileUpdateEmailProps) => (
         {/* Content */}
         <Section style={content}>
           <Text style={contentTitle}>Profil mis à jour ✅</Text>
-          <Text style={paragraph}>Votre nom d&apos;utilisateur a été modifié avec succès.</Text>
 
-          {/* Success Box */}
-          <Section style={successBox}>
-            <Text style={successBoxText}>
-              <strong>Nouveau nom :</strong> {newName}
-            </Text>
+          {/* Highlight Box */}
+          <Section style={highlightBox}>
+            <Text style={highlightLabel}>Nouveau nom d&apos;utilisateur</Text>
+            <Text style={highlightValue}>{newName}</Text>
           </Section>
 
-          {/* Info Box */}
-          <Section style={infoBox}>
-            <Text style={infoBoxText}>
-              💡 Si vous n&apos;avez pas effectué cette modification, veuillez contacter notre
-              équipe de support immédiatement.
+          {/* Details Box */}
+          <Section style={successBox}>
+            <Text style={successBoxText}>Cette modification a été appliquée à votre compte.</Text>
+          </Section>
+
+          {/* Security Info */}
+          <Section style={securitySection}>
+            <Text style={securityLabel}>🔒 Sécurité du compte</Text>
+            <Text style={securityMessage}>
+              Si vous n&apos;avez pas effectué cette modification, veuillez contacter notre équipe
+              de support immédiatement.
             </Text>
           </Section>
         </Section>
@@ -71,11 +79,10 @@ ProfileUpdateEmail.PreviewProps = {
 
 export default ProfileUpdateEmail
 
-// Styles
+// Styles - Match site design (Helix)
 const main = {
   backgroundColor: "#e8ebed",
-  fontFamily:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif',
+  fontFamily: "Outfit, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
   lineHeight: "1.6",
   color: "#333333",
   margin: "0",
@@ -88,87 +95,124 @@ const container = {
   marginTop: "24px",
   marginBottom: "24px",
   backgroundColor: "#ffffff",
-  borderRadius: "12px",
-  boxShadow: "0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)",
+  borderRadius: "8px",
+  boxShadow: "0px 1px 3px 0px rgba(26, 26, 26, 0.1), 0px 1px 2px -1px rgba(26, 26, 26, 0.1)",
   overflow: "hidden" as const,
 }
 
 const header = {
   background: "linear-gradient(135deg, #df6035 0%, #e05d38 100%)",
   color: "white",
-  padding: "60px 40px",
+  padding: "56px 40px",
   textAlign: "center" as const,
 }
 
 const headerTitle = {
   margin: "0",
-  fontSize: "36px",
+  fontSize: "32px",
   fontWeight: "700" as const,
   letterSpacing: "-0.5px",
   color: "white",
+  fontFamily: "Outfit",
 }
 
 const headerSubtitle = {
   fontSize: "14px",
   opacity: 0.95,
-  fontWeight: "400" as const,
+  fontWeight: "500" as const,
   margin: "8px 0 0 0",
   color: "white",
+  fontFamily: "Outfit",
 }
 
 const content = {
-  padding: "48px 40px",
+  padding: "56px 40px",
   backgroundColor: "#ffffff",
 }
 
 const contentTitle = {
-  fontSize: "24px",
+  fontSize: "28px",
   fontWeight: "700" as const,
-  marginBottom: "20px",
+  marginBottom: "24px",
   color: "#2f4b79",
-  margin: "0 0 20px 0",
-}
-
-const paragraph = {
-  margin: "16px 0",
-  fontSize: "15px",
-  lineHeight: "1.7",
-  color: "#555555",
+  margin: "0 0 24px 0",
+  fontFamily: "Outfit",
 }
 
 const successBox = {
-  backgroundColor: "#dcfce7",
-  borderLeft: "4px solid #22c55e",
+  backgroundColor: "#d6e4f0",
+  border: "1px solid #b8d5e8",
   padding: "20px",
-  borderRadius: "6px",
-  margin: "24px 0",
+  borderRadius: "8px",
+  margin: "32px 0",
 }
 
 const successBoxText = {
   margin: "0",
-  color: "#166534",
-  fontSize: "14px",
-  fontWeight: "500" as const,
-}
-
-const infoBox = {
-  backgroundColor: "#d6e4f0",
-  borderLeft: "4px solid #2f4b79",
-  padding: "20px",
-  borderRadius: "6px",
-  margin: "24px 0",
-}
-
-const infoBoxText = {
-  margin: "0",
   color: "#2f4b79",
   fontSize: "14px",
   fontWeight: "500" as const,
+  fontFamily: "Outfit",
+}
+
+const highlightBox = {
+  backgroundColor: "#fafbfc",
+  border: "2px solid #df6035",
+  padding: "24px",
+  borderRadius: "12px",
+  margin: "28px 0",
+  textAlign: "center" as const,
+}
+
+const highlightLabel = {
+  fontSize: "12px",
+  fontWeight: "700" as const,
+  letterSpacing: "0.5px",
+  textTransform: "uppercase",
+  color: "#2f4b79",
+  margin: "0 0 12px 0",
+  fontFamily: "Outfit",
+}
+
+const highlightValue = {
+  fontSize: "24px",
+  fontWeight: "700" as const,
+  color: "#df6035",
+  margin: "0",
+  fontFamily: "Outfit",
+  letterSpacing: "-0.5px",
+}
+
+const securitySection = {
+  backgroundColor: "#f3f4f6",
+  padding: "20px",
+  borderRadius: "8px",
+  margin: "32px 0",
+  borderLeft: "4px solid #df6035",
+}
+
+const securityLabel = {
+  fontSize: "13px",
+  fontWeight: "600" as const,
+  color: "#2f4b79",
+  margin: "0 0 8px 0",
+  fontFamily: "Outfit",
+}
+
+const securityMessage = {
+  fontSize: "14px",
+  color: "#555555",
+  margin: "0",
+  fontFamily: "Outfit",
+  lineHeight: "1.6",
 }
 
 const divider = {
   borderColor: "#d6e4f0",
-  margin: "28px 0",
+  margin: "32px 0",
+  border: "none",
+  borderTop: "1px solid #d6e4f0",
+  height: "0",
 }
 
 const footer = {
@@ -184,16 +228,19 @@ const footerLogo = {
   color: "#df6035",
   marginBottom: "12px",
   margin: "0 0 12px 0",
+  fontFamily: "Outfit",
 }
 
 const footerText = {
   margin: "6px 0",
   fontSize: "13px",
   color: "#6b7280",
+  fontFamily: "Outfit",
 }
 
 const footerLink = {
   color: "#2f4b79",
   textDecoration: "none",
-  fontWeight: "500" as const,
+  fontWeight: "600" as const,
+  fontFamily: "Outfit",
 }

@@ -18,7 +18,11 @@ interface VerificationEmailProps {
 
 export const VerificationEmail = ({ verificationUrl }: VerificationEmailProps) => (
   <Html>
-    <Head />
+    <Head>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+      `}</style>
+    </Head>
     <Preview>Vérifiez votre adresse email pour activer votre compte</Preview>
     <Body style={main}>
       <Container style={container}>
@@ -36,21 +40,25 @@ export const VerificationEmail = ({ verificationUrl }: VerificationEmailProps) =
             cliquant sur le bouton ci-dessous.
           </Text>
 
-          {/* Button */}
-          <Section style={buttonContainer}>
-            <Button href={verificationUrl} style={button}>
-              Vérifier mon adresse email
-            </Button>
+          {/* Action Box */}
+          <Section style={actionBox}>
+            <Text style={actionLabel}>Étape suivante</Text>
+            <Section style={buttonContainer}>
+              <Button href={verificationUrl} style={button}>
+                ✓ Vérifier mon adresse email
+              </Button>
+            </Section>
           </Section>
 
           <Hr style={divider} />
 
-          {/* Fallback URL */}
-          <Text style={fallbackText}>
-            Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :
-          </Text>
-          <Section style={codeBox}>
-            <Text style={codeBoxText}>{verificationUrl}</Text>
+          {/* Fallback Section */}
+          <Section style={fallbackSection}>
+            <Text style={fallbackTitle}>⚠️ Le bouton ne fonctionne pas ?</Text>
+            <Text style={fallbackText}>Copiez et collez ce lien dans votre navigateur :</Text>
+            <Section style={codeBox}>
+              <Text style={codeBoxText}>{verificationUrl}</Text>
+            </Section>
           </Section>
 
           {/* Info Box */}
@@ -85,11 +93,10 @@ VerificationEmail.PreviewProps = {
 
 export default VerificationEmail
 
-// Styles
+// Styles - Match site design (Helix)
 const main = {
   backgroundColor: "#e8ebed",
-  fontFamily:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif',
+  fontFamily: "Outfit, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
   lineHeight: "1.6",
   color: "#333333",
   margin: "0",
@@ -102,45 +109,48 @@ const container = {
   marginTop: "24px",
   marginBottom: "24px",
   backgroundColor: "#ffffff",
-  borderRadius: "12px",
-  boxShadow: "0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)",
+  borderRadius: "8px",
+  boxShadow: "0px 1px 3px 0px rgba(26, 26, 26, 0.1), 0px 1px 2px -1px rgba(26, 26, 26, 0.1)",
   overflow: "hidden" as const,
 }
 
 const header = {
   background: "linear-gradient(135deg, #df6035 0%, #e05d38 100%)",
   color: "white",
-  padding: "60px 40px",
+  padding: "56px 40px",
   textAlign: "center" as const,
 }
 
 const headerTitle = {
   margin: "0",
-  fontSize: "36px",
+  fontSize: "32px",
   fontWeight: "700" as const,
   letterSpacing: "-0.5px",
   color: "white",
+  fontFamily: "Outfit",
 }
 
 const headerSubtitle = {
   fontSize: "14px",
   opacity: 0.95,
-  fontWeight: "400" as const,
+  fontWeight: "500" as const,
   margin: "8px 0 0 0",
   color: "white",
+  fontFamily: "Outfit",
 }
 
 const content = {
-  padding: "48px 40px",
+  padding: "56px 40px",
   backgroundColor: "#ffffff",
 }
 
 const contentTitle = {
-  fontSize: "24px",
+  fontSize: "28px",
   fontWeight: "700" as const,
-  marginBottom: "20px",
+  marginBottom: "24px",
   color: "#2f4b79",
-  margin: "0 0 20px 0",
+  margin: "0 0 24px 0",
+  fontFamily: "Outfit",
 }
 
 const paragraph = {
@@ -148,34 +158,41 @@ const paragraph = {
   fontSize: "15px",
   lineHeight: "1.7",
   color: "#555555",
+  fontFamily: "Outfit",
 }
 
 const buttonContainer = {
   textAlign: "center" as const,
-  margin: "28px 0",
+  margin: "32px 0",
 }
 
 const button = {
   backgroundColor: "#df6035",
   color: "white",
-  padding: "14px 32px",
+  padding: "12px 32px",
   textDecoration: "none",
   borderRadius: "8px",
   fontWeight: "600" as const,
   fontSize: "15px",
   display: "inline-block",
-  boxShadow: "0 1px 3px rgba(223, 96, 53, 0.3)",
+  fontFamily: "Outfit",
+  border: "none",
+  cursor: "pointer",
 }
 
 const divider = {
   borderColor: "#d6e4f0",
-  margin: "28px 0",
+  margin: "32px 0",
+  border: "none",
+  borderTop: "1px solid #d6e4f0",
+  height: "0",
 }
 
 const fallbackText = {
   fontSize: "13px",
   color: "#6b7280",
   margin: "16px 0",
+  fontFamily: "Outfit",
 }
 
 const codeBox = {
@@ -188,7 +205,7 @@ const codeBox = {
 }
 
 const codeBoxText = {
-  fontFamily: '"Courier New", monospace',
+  fontFamily: "Outfit, monospace",
   fontSize: "12px",
   color: "#6b7280",
   lineHeight: "1.5",
@@ -196,11 +213,11 @@ const codeBoxText = {
 }
 
 const infoBox = {
-  backgroundColor: "#d6e4f0",
-  borderLeft: "4px solid #2f4b79",
+  backgroundColor: "#f0f4f8",
+  border: "1px solid #d6e4f0",
   padding: "20px",
-  borderRadius: "6px",
-  margin: "24px 0",
+  borderRadius: "8px",
+  margin: "32px 0",
 }
 
 const infoBoxText = {
@@ -208,6 +225,41 @@ const infoBoxText = {
   color: "#2f4b79",
   fontSize: "14px",
   fontWeight: "500" as const,
+  fontFamily: "Outfit",
+}
+
+const actionBox = {
+  backgroundColor: "#fafbfc",
+  border: "2px solid #d6e4f0",
+  padding: "24px",
+  borderRadius: "12px",
+  margin: "32px 0",
+}
+
+const actionLabel = {
+  fontSize: "12px",
+  fontWeight: "700" as const,
+  letterSpacing: "0.5px",
+  textTransform: "uppercase",
+  color: "#2f4b79",
+  margin: "0 0 16px 0",
+  fontFamily: "Outfit",
+}
+
+const fallbackSection = {
+  backgroundColor: "#fafbfc",
+  padding: "20px",
+  borderRadius: "8px",
+  margin: "32px 0",
+  border: "1px solid #d6e4f0",
+}
+
+const fallbackTitle = {
+  fontSize: "14px",
+  fontWeight: "600" as const,
+  color: "#2f4b79",
+  margin: "0 0 12px 0",
+  fontFamily: "Outfit",
 }
 
 const footer = {
@@ -223,16 +275,19 @@ const footerLogo = {
   color: "#df6035",
   marginBottom: "12px",
   margin: "0 0 12px 0",
+  fontFamily: "Outfit",
 }
 
 const footerText = {
   margin: "6px 0",
   fontSize: "13px",
   color: "#6b7280",
+  fontFamily: "Outfit",
 }
 
 const footerLink = {
   color: "#2f4b79",
   textDecoration: "none",
-  fontWeight: "500" as const,
+  fontWeight: "600" as const,
+  fontFamily: "Outfit",
 }

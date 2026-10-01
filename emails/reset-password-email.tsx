@@ -30,7 +30,7 @@ export const ResetPasswordEmail = ({ resetUrl }: ResetPasswordEmailProps) => (
         {/* Header */}
         <Section style={header}>
           <Img
-            src="https://helix.app/logo-full.png"
+            src="https://helix.app/api/logo"
             alt="Helix"
             width={180}
             height={72}

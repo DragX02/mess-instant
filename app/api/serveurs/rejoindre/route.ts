@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/chat"
 import { erreur, nonConnecte } from "@/lib/reponses"
+import { membresServeur, publier } from "@/lib/temps-reel"
 
 export async function POST(request: Request) {
   const user = await getCurrentUser()
@@ -26,6 +27,8 @@ export async function POST(request: Request) {
     update: {},
     create: { userId: user.id, serverId: server.id },
   })
+
+  publier(await membresServeur(server.id), { type: "donnees" })
 
   return Response.json({ id: server.id })
 }

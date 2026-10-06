@@ -1,6 +1,8 @@
+import type { Conversation, User } from "@prisma/client"
 import { prisma } from "@/lib/prisma"
 import { canManageServer, getCurrentUser, isMember } from "@/lib/chat"
 import { actionImpossible, erreur, nonConnecte, ok } from "@/lib/reponses"
+import { destinatairesConversation, notifierConversation, publier } from "@/lib/temps-reel"
 
 export async function PATCH(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
@@ -20,6 +22,7 @@ export async function PATCH(request: Request, ctx: { params: Promise<{ id: strin
   }
 
   await prisma.conversation.update({ where: { id }, data: { accepted: true } })
+  await notifierConversation(conversation, { type: "donnees" })
 
   return ok()
 }
@@ -37,6 +40,18 @@ export async function DELETE(request: Request, ctx: { params: Promise<{ id: stri
   if (!conversation) {
     return erreur("Conversation introuvable.", 404)
   }
+
+  const destinataires = await destinatairesConversation(conversation)
+  const reponse = await supprimer(conversation, user)
+
+  if (reponse.ok) {
+    publier(destinataires, { type: "donnees" })
+  }
+  return reponse
+}
+
+async function supprimer(conversation: Conversation, user: User) {
+  const id = conversation.id
 
   if (conversation.type === "PUBLIC") {
     const canManage = conversation.serverId

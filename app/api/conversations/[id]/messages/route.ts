@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { CHAMPS_UTILISATEUR, canRead, canWrite, getCurrentUser, nomAffiche } from "@/lib/chat"
 import { donnerPieces } from "@/lib/monnaie"
 import { erreur, nonConnecte } from "@/lib/reponses"
+import { notifierConversation } from "@/lib/temps-reel"
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024
 
@@ -132,6 +133,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
   })
 
   await donnerPieces(user.id)
+  await notifierConversation(conversation, { type: "messages", conversationId: id })
 
   return Response.json({ id: message.id })
 }

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { canRead, getCurrentUser } from "@/lib/chat"
+import { donnerPieces } from "@/lib/monnaie"
 import { erreur, nonConnecte, ok } from "@/lib/reponses"
 
 export async function POST(request: Request, ctx: { params: Promise<{ id: string }> }) {
@@ -34,6 +35,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
     await prisma.reaction.delete({ where: { id: existing.id } })
   } else {
     await prisma.reaction.create({ data: { userId: user.id, messageId: id, emoji: emoji } })
+    await donnerPieces(user.id)
   }
 
   return ok()

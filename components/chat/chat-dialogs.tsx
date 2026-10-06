@@ -1,7 +1,8 @@
 "use client"
 
-import type { ConversationItem, Friend, ServerItem } from "@/lib/types"
+import type { ConversationItem, Friend, Portefeuille, ServerItem } from "@/lib/types"
 import type { UiTheme } from "@/hooks/use-ui-theme"
+import { BoutiqueDialog } from "./boutique-dialog"
 import { GroupMembersDialog } from "./group-members-dialog"
 import { NewGroupDialog } from "./new-group-dialog"
 import { NewPrivateDialog } from "./new-private-dialog"
@@ -17,6 +18,7 @@ export type DialogName =
   | "serveur-rejoindre"
   | "inviter"
   | "parametres"
+  | "boutique"
 
 export function ChatDialogs({
   dialog,
@@ -24,6 +26,7 @@ export function ChatDialogs({
   conversation,
   server,
   theme,
+  portefeuille,
   onApplyTheme,
   onClose,
   onCreated,
@@ -35,6 +38,7 @@ export function ChatDialogs({
   conversation: ConversationItem | undefined
   server: ServerItem | undefined
   theme: UiTheme
+  portefeuille: Portefeuille | null
   onApplyTheme: (theme: UiTheme) => void
   onClose: () => void
   onCreated: (id: string) => void
@@ -42,7 +46,18 @@ export function ChatDialogs({
   onChange: () => void
 }) {
   if (dialog === "parametres") {
-    return <SettingsDialog current={theme} onApply={onApplyTheme} onClose={onClose} />
+    return (
+      <SettingsDialog
+        current={theme}
+        owned={portefeuille ? portefeuille.ownedThemes : ["classique"]}
+        onApply={onApplyTheme}
+        onClose={onClose}
+      />
+    )
+  }
+
+  if (dialog === "boutique" && portefeuille) {
+    return <BoutiqueDialog portefeuille={portefeuille} onClose={onClose} onChange={onChange} />
   }
 
   if (dialog === "groupe") {

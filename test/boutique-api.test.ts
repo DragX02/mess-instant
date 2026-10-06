@@ -146,6 +146,35 @@ describe("POST /api/boutique", () => {
 
     expect(reponse.status).toBe(400)
   })
+
+  it("achète un pack et ajoute les pièces", async () => {
+    chat.getCurrentUser.mockResolvedValue(utilisateur())
+
+    const reponse = await POST(requete({ type: "pack", id: "entreprise" }))
+
+    expect(reponse.status).toBe(200)
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: { id: "u1" },
+      data: { coins: { increment: 3000 } },
+    })
+  })
+
+  it("refuse un pack inconnu", async () => {
+    chat.getCurrentUser.mockResolvedValue(utilisateur())
+
+    const reponse = await POST(requete({ type: "pack", id: "geant" }))
+
+    expect(reponse.status).toBe(400)
+    expect(prisma.user.update).not.toHaveBeenCalled()
+  })
+
+  it("refuse un pack pour un visiteur non connecté", async () => {
+    chat.getCurrentUser.mockResolvedValue(null)
+
+    const reponse = await POST(requete({ type: "pack", id: "decouverte" }))
+
+    expect(reponse.status).toBe(401)
+  })
 })
 
 describe("POST /api/serveurs avec les grades", () => {

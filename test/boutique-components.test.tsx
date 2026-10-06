@@ -50,6 +50,30 @@ describe("BoutiqueDialog", () => {
     expect(onChange).toHaveBeenCalled()
   })
 
+  it("affiche les 3 packs avec la réduction", () => {
+    render(<BoutiqueDialog portefeuille={portefeuille()} onClose={() => {}} onChange={() => {}} />)
+
+    expect(screen.getByText("499 pièces")).toBeInTheDocument()
+    expect(screen.getByText("1499 pièces")).toBeInTheDocument()
+    expect(screen.getByText("3000 pièces")).toBeInTheDocument()
+    expect(screen.getByText("-15 %")).toBeInTheDocument()
+    expect(screen.getByText("25,50 €")).toBeInTheDocument()
+  })
+
+  it("achète un pack de pièces", async () => {
+    const fetch = vi.fn(async () => reponseFetch(200, { ok: true }))
+    vi.stubGlobal("fetch", fetch)
+    const onChange = vi.fn()
+    const user = userEvent.setup()
+
+    render(<BoutiqueDialog portefeuille={portefeuille()} onClose={() => {}} onChange={onChange} />)
+    await user.click(screen.getByRole("button", { name: "Acheter le pack Équipe" }))
+
+    const [, options] = fetch.mock.calls[0] as unknown as [string, RequestInit]
+    expect(JSON.parse(String(options.body))).toEqual({ type: "pack", id: "equipe" })
+    expect(onChange).toHaveBeenCalled()
+  })
+
   it("désactive un achat trop cher", () => {
     render(<BoutiqueDialog portefeuille={portefeuille()} onClose={() => {}} onChange={() => {}} />)
 

@@ -3,10 +3,11 @@
 import { useState } from "react"
 import { Coins, Crown } from "lucide-react"
 import { api } from "@/lib/api"
-import { DUREE_GRADE_JOURS, GRADES, THEMES_BOUTIQUE, trouverGrade } from "@/lib/boutique"
+import { DUREE_GRADE_JOURS, GRADES, PACKS, THEMES_BOUTIQUE, trouverGrade } from "@/lib/boutique"
 import type { Portefeuille } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Modal } from "@/components/ui/modal"
+import { PackCard } from "@/components/pack-card"
 
 export function BoutiqueDialog({
   portefeuille,
@@ -59,6 +60,30 @@ export function BoutiqueDialog({
           Gagnez 1 pièce par message envoyé et par réaction (200 par jour maximum).
         </p>
       </div>
+
+      <p className="mb-2 text-sm font-medium">Packs de pièces</p>
+      <div className="mb-2 flex flex-col gap-4 pt-2">
+        {PACKS.map((pack) => (
+          <PackCard key={pack.id} pack={pack} compact>
+            <Button
+              size="sm"
+              aria-label={"Acheter le pack " + pack.nom}
+              disabled={enCours}
+              onClick={() =>
+                acheter(
+                  { type: "pack", id: pack.id },
+                  "Pack " + pack.nom + " (" + pack.pieces + " pièces)",
+                )
+              }
+            >
+              Acheter
+            </Button>
+          </PackCard>
+        ))}
+      </div>
+      <p className="mb-4 text-xs text-muted-foreground">
+        Achat fictif pour la démonstration : aucun paiement réel.
+      </p>
 
       <p className="mb-2 text-sm font-medium">Grades</p>
       <div className="mb-4 flex flex-col gap-2">

@@ -69,6 +69,16 @@ export function ChatSidebar({
     return conversations.filter((conversation) => types.includes(conversation.type))
   }
 
+  function nonLus(liste: ConversationItem[]) {
+    let total = 0
+    for (const conversation of liste) {
+      if (conversation.id !== selectedId) {
+        total = total + conversation.nonLus
+      }
+    }
+    return total > 0 ? String(total) : ""
+  }
+
   function entry(conversation: ConversationItem, badge?: string) {
     return (
       <SidebarButton
@@ -76,7 +86,7 @@ export function ChatSidebar({
         icon={<ConversationIcon type={conversation.type} />}
         label={conversation.name || ""}
         active={!showFriends && conversation.id === selectedId}
-        badge={badge}
+        badge={badge || nonLus([conversation])}
         onClick={() => onSelect(conversation.id)}
       />
     )
@@ -89,6 +99,7 @@ export function ChatSidebar({
         icon={icon}
         label={label}
         active={!showFriends && galaxyId === id && selectedId === ""}
+        badge={nonLus(conversationsIn(conversations, id))}
         onClick={() => onEnterGalaxy(id)}
       />
     )

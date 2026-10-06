@@ -11,6 +11,7 @@ import type {
   ConversationItem,
   CurrentUser,
   FriendsData,
+  EvenementTempsReel,
   GroupMember,
   MessageItem,
   Portefeuille,
@@ -22,6 +23,7 @@ import { ChatSidebar } from "./chat-sidebar"
 import { ClassicView } from "./classic-view"
 import { ConversationView } from "./conversation-view"
 import { FriendsPanel } from "./friends-panel"
+import { MessageToasts, type ToastMessage } from "./message-toasts"
 import type { GalaxyStar } from "./space/galaxy"
 
 const NO_FRIENDS: FriendsData = { friends: [], received: [], sent: [] }
@@ -46,6 +48,7 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
   const [dialog, setDialog] = useState<DialogName>("")
   const [refresh, setRefresh] = useState(0)
   const [messagesVersion, setMessagesVersion] = useState(0)
+  const [toasts, setToasts] = useState<ToastMessage[]>([])
 
   useTempsReel(
     (evenement) => {
@@ -53,6 +56,9 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
         reload()
       } else if (planetOpen && evenement.conversationId === selectedId) {
         setMessagesVersion((value) => value + 1)
+      } else if (evenement.nouveau && user && evenement.nouveau.auteurId !== user.id) {
+        showToast(evenement)
+        reload()
       }
     },
     user ? user.id : "anonyme",
@@ -133,6 +139,32 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
     setRefresh((value) => value + 1)
   }
 
+  function showToast(evenement: EvenementTempsReel) {
+    if (evenement.type !== "messages" || !evenement.nouveau) {
+      return
+    }
+
+    const conversation = conversations.find((item) => item.id === evenement.conversationId)
+    let titre = evenement.nouveau.auteur
+    if (conversation && conversation.type !== "PRIVATE" && conversation.name) {
+      titre = titre + " dans " + conversation.name
+    }
+
+    const toast = {
+      id: crypto.randomUUID(),
+      conversationId: evenement.conversationId,
+      titre: titre,
+      texte: evenement.nouveau.texte,
+    }
+
+    setToasts((liste) => [...liste.slice(-2), toast])
+    setTimeout(() => closeToast(toast.id), 5000)
+  }
+
+  function closeToast(id: string) {
+    setToasts((liste) => liste.filter((toast) => toast.id !== id))
+  }
+
   function closePanels() {
     setShowFriends(false)
     setShowSidebar(false)
@@ -164,6 +196,11 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
       setMessages([])
       setCanWrite(false)
     }
+    setConversations((liste) =>
+      liste.map((conversation) =>
+        conversation.id === id ? { ...conversation, nonLus: 0 } : conversation,
+      ),
+    )
     if (target !== galaxyId) {
       setMembers([])
     }
@@ -374,6 +411,8 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
         }}
         onChange={reload}
       />
+
+      <MessageToasts toasts={toasts} onOpen={(id) => selectConversation(id)} onClose={closeToast} />
     </div>
   )
 }

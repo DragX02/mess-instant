@@ -14,6 +14,7 @@ export type ConversationItem = {
   createdById: string | null
   memberCount: number
   serverId: string | null
+  nonLus: number
 }
 
 export type ServerItem = {
@@ -71,4 +72,11 @@ export type Portefeuille = {
   maxServers: number
 }
 
-export type EvenementTempsReel = { type: "messages"; conversationId: string } | { type: "donnees" }
+export type NouveauMessage = {
+  auteurId: string
+  auteur: string
+  texte: string
+}
+
+export type EvenementTempsReel =
+  { type: "messages"; conversationId: string; nouveau?: NouveauMessage } | { type: "donnees" }

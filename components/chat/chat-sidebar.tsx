@@ -4,7 +4,13 @@ import Link from "next/link"
 import { LogIn, MessageCircle, Orbit, UserPlus } from "lucide-react"
 import { cn } from "cn"
 import { PERSONAL_GALAXY, conversationsIn } from "@/lib/galaxies"
-import type { ConversationItem, ConversationType, CurrentUser, ServerItem } from "@/lib/types"
+import type {
+  ConversationItem,
+  ConversationType,
+  CurrentUser,
+  Portefeuille,
+  ServerItem,
+} from "@/lib/types"
 import type { UiTheme } from "@/hooks/use-ui-theme"
 import { Button } from "@/components/ui/button"
 import { SidebarButton, SidebarEmpty, SidebarSection } from "@/components/ui/sidebar-nav"
@@ -31,6 +37,8 @@ export function ChatSidebar({
   onCreateChannel,
   onNewGroup,
   onNewPrivate,
+  portefeuille,
+  onOpenShop,
   onOpenSettings,
   onSignOut,
 }: {
@@ -52,6 +60,8 @@ export function ChatSidebar({
   onCreateChannel: () => void
   onNewGroup: () => void
   onNewPrivate: () => void
+  portefeuille: Portefeuille | null
+  onOpenShop: () => void
   onOpenSettings: () => void
   onSignOut: () => void
 }) {
@@ -172,7 +182,13 @@ export function ChatSidebar({
 
         <div className="border-t border-border p-3">
           {user ? (
-            <UserMenu user={user} onOpenSettings={onOpenSettings} onSignOut={onSignOut} />
+            <UserMenu
+              user={user}
+              portefeuille={portefeuille}
+              onOpenShop={onOpenShop}
+              onOpenSettings={onOpenSettings}
+              onSignOut={onSignOut}
+            />
           ) : (
             <div className="flex flex-col gap-2">
               <Button nativeButton={false} render={<Link href="/auth/connexion" />}>

@@ -15,6 +15,13 @@ model User {
   isAdmin   Boolean  @default(false)
   createdAt DateTime @default(now())
 
+  coins            Int       @default(0)
+  grade            Int       @default(1)
+  gradeExpiresAt   DateTime?
+  coinsEarnedToday Int       @default(0)
+  coinsDay         String?
+  ownedThemes      String[]  @default(["classique"])
+
   memberships     Membership[]
   serverMembers   ServerMember[]
   messages        Message[]

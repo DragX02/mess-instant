@@ -12,6 +12,7 @@ import type {
   FriendsData,
   GroupMember,
   MessageItem,
+  Portefeuille,
   ServerItem,
 } from "@/lib/types"
 import { ChatDialogs, type DialogName } from "./chat-dialogs"
@@ -26,7 +27,7 @@ const NO_FRIENDS: FriendsData = { friends: [], received: [], sent: [] }
 
 export function ChatApp({ user }: { user: CurrentUser | null }) {
   const signOut = useSignOut()
-  const { theme, apply } = useUiTheme()
+  const { theme: themeChoisi, apply } = useUiTheme()
   const [servers, setServers] = useState<ServerItem[]>([])
   const [conversations, setConversations] = useState<ConversationItem[]>([])
   const [galaxyId, setGalaxyId] = useState<string | null>(null)
@@ -36,6 +37,7 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
   const [canWrite, setCanWrite] = useState(false)
   const [members, setMembers] = useState<GroupMember[]>([])
   const [friendsData, setFriendsData] = useState<FriendsData>(NO_FRIENDS)
+  const [portefeuille, setPortefeuille] = useState<Portefeuille | null>(null)
   const [showFriends, setShowFriends] = useState(false)
   const [showSidebar, setShowSidebar] = useState(false)
   const [dialog, setDialog] = useState<DialogName>("")
@@ -61,9 +63,18 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
         return
       }
 
-      const friends = await api<FriendsData>("/api/amis")
-      if (friends.ok && isActive()) {
+      const [friends, boutique] = await Promise.all([
+        api<FriendsData>("/api/amis"),
+        api<Portefeuille>("/api/boutique"),
+      ])
+      if (!isActive()) {
+        return
+      }
+      if (friends.ok) {
         setFriendsData(friends.data)
+      }
+      if (boutique.ok) {
+        setPortefeuille(boutique.data)
       }
     },
     5000,
@@ -218,6 +229,11 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
     reload()
   }
 
+  let theme = themeChoisi
+  if (!user || (portefeuille && !portefeuille.ownedThemes.includes(themeChoisi))) {
+    theme = "classique"
+  }
+
   const server = servers.find((item) => item.id === galaxyId)
   const selected = planetOpen
     ? conversations.find((conversation) => conversation.id === selectedId)
@@ -258,6 +274,8 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
         onCreateChannel={createChannel}
         onNewGroup={() => setDialog("groupe")}
         onNewPrivate={() => setDialog("mp")}
+        portefeuille={portefeuille}
+        onOpenShop={() => setDialog("boutique")}
         onOpenSettings={() => setDialog("parametres")}
         onSignOut={signOut}
       />
@@ -328,6 +346,7 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
         conversation={selected}
         server={server}
         theme={theme}
+        portefeuille={portefeuille}
         onApplyTheme={apply}
         onClose={() => setDialog("")}
         onCreated={(id) => {

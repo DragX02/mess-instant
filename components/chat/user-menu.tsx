@@ -2,16 +2,21 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ChevronUp, LogOut, Settings, User } from "lucide-react"
-import type { CurrentUser } from "@/lib/types"
+import { ChevronUp, Coins, LogOut, Settings, ShoppingBag, User } from "lucide-react"
+import { trouverGrade } from "@/lib/boutique"
+import type { CurrentUser, Portefeuille } from "@/lib/types"
 import { Avatar } from "@/components/ui/avatar"
 
 export function UserMenu({
   user,
+  portefeuille,
+  onOpenShop,
   onOpenSettings,
   onSignOut,
 }: {
   user: CurrentUser
+  portefeuille: Portefeuille | null
+  onOpenShop: () => void
   onOpenSettings: () => void
   onSignOut: () => void
 }) {
@@ -36,6 +41,14 @@ export function UserMenu({
             <User className="h-4 w-4 shrink-0" />
             Profil
           </Link>
+          <button
+            type="button"
+            onClick={() => choose(onOpenShop)}
+            className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-muted"
+          >
+            <ShoppingBag className="h-4 w-4 shrink-0" />
+            Boutique
+          </button>
           <button
             type="button"
             onClick={() => choose(onOpenSettings)}
@@ -66,6 +79,12 @@ export function UserMenu({
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium">{user.name}</p>
           {user.isAdmin && <p className="text-[11px] text-primary">Admin</p>}
+          {portefeuille && (
+            <p className="flex items-center gap-1 text-[11px] text-muted-foreground">
+              <Coins className="h-3 w-3 shrink-0" />
+              {portefeuille.coins} · {trouverGrade(portefeuille.grade).nom}
+            </p>
+          )}
         </div>
         <ChevronUp
           className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${open ? "" : "rotate-180"}`}

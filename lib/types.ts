@@ -61,3 +61,12 @@ export type GroupMember = {
   name: string
   role: string
 }
+
+export type Portefeuille = {
+  coins: number
+  grade: number
+  gradeExpiresAt: string | null
+  ownedThemes: string[]
+  serversCreated: number
+  maxServers: number
+}

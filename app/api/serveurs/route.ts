@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { DEFAULT_SERVER_ID, getCurrentUser, joinDefaultServer, newInviteCode } from "@/lib/chat"
+import { gradeActuel, trouverGrade } from "@/lib/boutique"
 import { erreur, nonConnecte } from "@/lib/reponses"
 
 export async function GET() {
@@ -54,6 +55,22 @@ export async function POST(request: Request) {
 
   if (name === "" || name.length > 50) {
     return erreur("Le nom du serveur est obligatoire (50 caractères max).", 400)
+  }
+
+  if (!user.isAdmin) {
+    const grade = trouverGrade(gradeActuel(user.grade, user.gradeExpiresAt))
+    const nombre = await prisma.server.count({ where: { createdById: user.id } })
+
+    if (nombre >= grade.maxServeurs) {
+      return erreur(
+        "Votre grade " +
+          grade.nom +
+          " permet " +
+          grade.maxServeurs +
+          " serveur(s). Passez au grade supérieur dans la boutique.",
+        403,
+      )
+    }
   }
 
   const server = await prisma.server.create({

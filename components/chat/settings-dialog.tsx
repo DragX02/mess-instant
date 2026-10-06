@@ -24,10 +24,12 @@ const THEMES: { id: UiTheme; name: string; detail: string; icon: React.ReactNode
 
 export function SettingsDialog({
   current,
+  owned,
   onApply,
   onClose,
 }: {
   current: UiTheme
+  owned: string[]
   onApply: (theme: UiTheme) => void
   onClose: () => void
 }) {
@@ -42,10 +44,11 @@ export function SettingsDialog({
           <button
             key={theme.id}
             type="button"
+            disabled={!owned.includes(theme.id)}
             onClick={() => setChoice(theme.id)}
             aria-pressed={choice === theme.id}
             className={cn(
-              "flex items-start gap-3 rounded-lg border p-3 text-left transition-colors",
+              "flex items-start gap-3 rounded-lg border p-3 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-50",
               choice === theme.id
                 ? "border-primary bg-primary/10"
                 : "border-border hover:bg-muted/60",
@@ -62,6 +65,9 @@ export function SettingsDialog({
                 )}
               </span>
               <span className="mt-0.5 block text-xs text-muted-foreground">{theme.detail}</span>
+              {!owned.includes(theme.id) && (
+                <span className="mt-1 block text-xs text-primary">À acheter dans la boutique</span>
+              )}
             </span>
             {choice === theme.id && <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />}
           </button>

@@ -23,6 +23,7 @@ model User {
   ownedThemes      String[]  @default(["classique"])
 
   memberships     Membership[]
+  lectures        Lecture[]
   serverMembers   ServerMember[]
   messages        Message[]
   reactions       Reaction[]
@@ -79,8 +80,21 @@ model Conversation {
   server      Server?      @relation(fields: [serverId], references: [id], onDelete: Cascade)
   memberships Membership[]
   messages    Message[]
+  lectures    Lecture[]
 
   @@index([serverId])
+}
+
+model Lecture {
+  id             String   @id @default(cuid())
+  userId         String
+  conversationId String
+  luLe           DateTime @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, conversationId])
 }
 
 model Membership {

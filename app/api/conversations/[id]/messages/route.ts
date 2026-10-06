@@ -27,6 +27,14 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
     take: 100,
   })
 
+  if (user) {
+    await prisma.lecture.upsert({
+      where: { userId_conversationId: { userId: user.id, conversationId: id } },
+      update: { luLe: new Date() },
+      create: { userId: user.id, conversationId: id },
+    })
+  }
+
   const messages = lastMessages.reverse().map((message) => {
     const reactions: { emoji: string; count: number; mine: boolean }[] = []
 
@@ -133,7 +141,16 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
   })
 
   await donnerPieces(user.id)
-  await notifierConversation(conversation, { type: "messages", conversationId: id })
+  let texte = content
+  if (texte === "") {
+    texte = audioDuration ? "Message vocal" : "Fichier : " + fileName
+  }
+
+  await notifierConversation(conversation, {
+    type: "messages",
+    conversationId: id,
+    nouveau: { auteurId: user.id, auteur: nomAffiche(user), texte: texte.slice(0, 120) },
+  })
 
   return Response.json({ id: message.id })
 }

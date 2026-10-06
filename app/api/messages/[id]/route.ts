@@ -3,6 +3,7 @@ import path from "path"
 import { prisma } from "@/lib/prisma"
 import { canManageServer, getCurrentUser } from "@/lib/chat"
 import { erreur, nonConnecte, ok } from "@/lib/reponses"
+import { notifierConversation } from "@/lib/temps-reel"
 
 export async function DELETE(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
@@ -14,7 +15,7 @@ export async function DELETE(request: Request, ctx: { params: Promise<{ id: stri
 
   const message = await prisma.message.findUnique({
     where: { id },
-    include: { conversation: { select: { serverId: true } } },
+    include: { conversation: true },
   })
 
   if (!message) {
@@ -36,6 +37,11 @@ export async function DELETE(request: Request, ctx: { params: Promise<{ id: stri
       await unlink(path.join(process.cwd(), "uploads", storedName))
     } catch {}
   }
+
+  await notifierConversation(message.conversation, {
+    type: "messages",
+    conversationId: message.conversationId,
+  })
 
   return ok()
 }

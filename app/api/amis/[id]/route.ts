@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { findPrivateConversation, getCurrentUser } from "@/lib/chat"
 import { erreur, nonConnecte, ok } from "@/lib/reponses"
+import { publier } from "@/lib/temps-reel"
 
 export async function PATCH(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
@@ -23,6 +24,8 @@ export async function PATCH(request: Request, ctx: { params: Promise<{ id: strin
     await prisma.conversation.update({ where: { id: conversation.id }, data: { accepted: true } })
   }
 
+  publier([friendship.requesterId, friendship.receiverId], { type: "donnees" })
+
   return ok()
 }
 
@@ -41,6 +44,7 @@ export async function DELETE(request: Request, ctx: { params: Promise<{ id: stri
   }
 
   await prisma.friendship.delete({ where: { id } })
+  publier([friendship.requesterId, friendship.receiverId], { type: "donnees" })
 
   return ok()
 }

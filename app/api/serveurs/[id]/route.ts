@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { DEFAULT_SERVER_ID, getCurrentUser, serverRole } from "@/lib/chat"
 import { actionImpossible, nonConnecte, ok } from "@/lib/reponses"
+import { membresServeur, publier } from "@/lib/temps-reel"
 
 export async function DELETE(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
@@ -16,6 +17,8 @@ export async function DELETE(request: Request, ctx: { params: Promise<{ id: stri
     return actionImpossible()
   }
 
+  const destinataires = await membresServeur(id)
+
   if (role === "OWNER") {
     await prisma.server.delete({ where: { id } })
   } else {
@@ -23,6 +26,8 @@ export async function DELETE(request: Request, ctx: { params: Promise<{ id: stri
       where: { userId_serverId: { userId: user.id, serverId: id } },
     })
   }
+
+  publier(destinataires, { type: "donnees" })
 
   return ok()
 }

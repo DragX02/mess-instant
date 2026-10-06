@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { CHAMPS_UTILISATEUR, getCurrentUser, nomAffiche } from "@/lib/chat"
 import { erreur, nonConnecte, ok } from "@/lib/reponses"
+import { publier } from "@/lib/temps-reel"
 
 export async function GET() {
   const user = await getCurrentUser()
@@ -81,6 +82,7 @@ export async function POST(request: Request) {
   }
 
   await prisma.friendship.create({ data: { requesterId: user.id, receiverId: target.id } })
+  publier([target.id], { type: "donnees" })
 
   return ok()
 }

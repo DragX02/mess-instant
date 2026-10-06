@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { canRead, getCurrentUser } from "@/lib/chat"
 import { donnerPieces } from "@/lib/monnaie"
 import { erreur, nonConnecte, ok } from "@/lib/reponses"
+import { notifierConversation } from "@/lib/temps-reel"
 
 export async function POST(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
@@ -37,6 +38,11 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
     await prisma.reaction.create({ data: { userId: user.id, messageId: id, emoji: emoji } })
     await donnerPieces(user.id)
   }
+
+  await notifierConversation(message.conversation, {
+    type: "messages",
+    conversationId: message.conversationId,
+  })
 
   return ok()
 }

@@ -70,3 +70,5 @@ export type Portefeuille = {
   serversCreated: number
   maxServers: number
 }
+
+export type EvenementTempsReel = { type: "messages"; conversationId: string } | { type: "donnees" }

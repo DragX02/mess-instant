@@ -9,6 +9,7 @@ import {
   nomAffiche,
 } from "@/lib/chat"
 import { erreur, nonConnecte } from "@/lib/reponses"
+import { notifierConversation } from "@/lib/temps-reel"
 
 export async function GET() {
   const user = await getCurrentUser()
@@ -88,6 +89,7 @@ export async function POST(request: Request) {
     const channel = await prisma.conversation.create({
       data: { type: "PUBLIC", name: name, createdById: user.id, serverId },
     })
+    await notifierConversation(channel, { type: "donnees" })
     return Response.json({ id: channel.id })
   }
 
@@ -118,6 +120,7 @@ export async function POST(request: Request) {
         },
       },
     })
+    await notifierConversation(group, { type: "donnees" })
     return Response.json({ id: group.id })
   }
 
@@ -152,6 +155,7 @@ export async function POST(request: Request) {
         memberships: { create: [{ userId: user.id }, { userId: target.id }] },
       },
     })
+    await notifierConversation(conversation, { type: "donnees" })
     return Response.json({ id: conversation.id })
   }
 

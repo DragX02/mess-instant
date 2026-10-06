@@ -7,6 +7,7 @@ import {
   membresVisibles,
 } from "@/lib/chat"
 import { actionImpossible, erreur, nonConnecte, ok } from "@/lib/reponses"
+import { notifierConversation } from "@/lib/temps-reel"
 
 export async function GET(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
@@ -50,6 +51,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
   }
 
   await prisma.membership.create({ data: { userId: userId, conversationId: id } })
+  await notifierConversation(conversation, { type: "donnees" })
 
   return ok()
 }

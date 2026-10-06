@@ -4,6 +4,7 @@ import { useState } from "react"
 import { api, apiSend } from "@/lib/api"
 import { PERSONAL_GALAXY, galaxyOf } from "@/lib/galaxies"
 import { usePolling } from "@/hooks/use-polling"
+import { useTempsReel } from "@/hooks/use-temps-reel"
 import { useSignOut } from "@/hooks/use-sign-out"
 import { useUiTheme } from "@/hooks/use-ui-theme"
 import type {
@@ -25,6 +26,8 @@ import type { GalaxyStar } from "./space/galaxy"
 
 const NO_FRIENDS: FriendsData = { friends: [], received: [], sent: [] }
 
+const SECOURS_MS = 30000
+
 export function ChatApp({ user }: { user: CurrentUser | null }) {
   const signOut = useSignOut()
   const { theme: themeChoisi, apply } = useUiTheme()
@@ -42,6 +45,18 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
   const [showSidebar, setShowSidebar] = useState(false)
   const [dialog, setDialog] = useState<DialogName>("")
   const [refresh, setRefresh] = useState(0)
+  const [messagesVersion, setMessagesVersion] = useState(0)
+
+  useTempsReel(
+    (evenement) => {
+      if (evenement.type === "donnees") {
+        reload()
+      } else if (planetOpen && evenement.conversationId === selectedId) {
+        setMessagesVersion((value) => value + 1)
+      }
+    },
+    user ? user.id : "anonyme",
+  )
 
   usePolling(
     async (isActive) => {
@@ -77,7 +92,7 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
         setPortefeuille(boutique.data)
       }
     },
-    5000,
+    SECOURS_MS,
     [user, refresh],
   )
 
@@ -91,7 +106,7 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
         setMembers(result.ok ? result.data : [])
       }
     },
-    15000,
+    SECOURS_MS,
     [user, galaxyId, refresh],
   )
 
@@ -110,8 +125,8 @@ export function ChatApp({ user }: { user: CurrentUser | null }) {
       setMessages(result.ok ? result.data.messages : [])
       setCanWrite(result.ok ? result.data.canWrite : false)
     },
-    2000,
-    [selectedId, planetOpen, refresh],
+    SECOURS_MS,
+    [selectedId, planetOpen, refresh, messagesVersion],
   )
 
   function reload() {

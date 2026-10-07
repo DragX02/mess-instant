@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/chat"
 import {
   GRADES,
+  PACKS,
   THEMES_BOUTIQUE,
   gradeActuel,
   nouvelleExpiration,
@@ -89,6 +90,21 @@ export async function POST(request: Request) {
     if (resultat.count === 0) {
       return erreur("Pas assez de pièces.", 400)
     }
+
+    return ok()
+  }
+
+  if (body.type === "pack") {
+    const pack = PACKS.find((item) => item.id === body.id)
+
+    if (!pack) {
+      return erreur("Pack introuvable.", 400)
+    }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { coins: { increment: pack.pieces } },
+    })
 
     return ok()
   }

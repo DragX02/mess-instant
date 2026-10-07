@@ -2,11 +2,14 @@ import { describe, it, expect } from "vitest"
 import {
   GRADES,
   LIMITE_PAR_JOUR,
+  PACKS,
   THEMES_BOUTIQUE,
   calculerGain,
+  formaterPrix,
   gradeActuel,
   nouvelleExpiration,
   peutAcheterGrade,
+  prixPack,
   trouverGrade,
 } from "@/lib/boutique"
 
@@ -105,5 +108,22 @@ describe("thèmes de la boutique", () => {
     const univers = THEMES_BOUTIQUE.find((theme) => theme.id === "univers")
     expect(classique?.prix).toBe(0)
     expect(univers?.prix).toBeGreaterThan(0)
+  })
+})
+
+describe("packs de pièces", () => {
+  it("propose 3 packs de 499, 1499 et 3000 pièces", () => {
+    expect(PACKS.map((pack) => pack.pieces)).toEqual([499, 1499, 3000])
+  })
+
+  it("applique 15 % de réduction sur le dernier pack", () => {
+    expect(prixPack(PACKS[0])).toBe(499)
+    expect(prixPack(PACKS[1])).toBe(1499)
+    expect(prixPack(PACKS[2])).toBe(2550)
+  })
+
+  it("affiche le prix en euros", () => {
+    expect(formaterPrix(499)).toBe("4,99 €")
+    expect(formaterPrix(2550)).toBe("25,50 €")
   })
 })

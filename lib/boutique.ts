@@ -33,6 +33,28 @@ export const THEMES_BOUTIQUE: ThemeBoutique[] = [
   },
 ]
 
+export type PackPieces = {
+  id: string
+  nom: string
+  pieces: number
+  prix: number
+  reduction: number
+}
+
+export const PACKS: PackPieces[] = [
+  { id: "decouverte", nom: "Découverte", pieces: 499, prix: 499, reduction: 0 },
+  { id: "equipe", nom: "Équipe", pieces: 1499, prix: 1499, reduction: 0 },
+  { id: "entreprise", nom: "Entreprise", pieces: 3000, prix: 3000, reduction: 15 },
+]
+
+export function prixPack(pack: PackPieces) {
+  return Math.round((pack.prix * (100 - pack.reduction)) / 100)
+}
+
+export function formaterPrix(centimes: number) {
+  return (centimes / 100).toFixed(2).replace(".", ",") + " €"
+}
+
 export const DUREE_GRADE_JOURS = 30
 export const GAIN_PAR_ACTION = 1
 export const LIMITE_PAR_JOUR = 200

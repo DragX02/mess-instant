@@ -24,20 +24,24 @@ export default function ConnexionPage() {
     setError(null)
     setLoading(true)
 
-    const { error: signInError } = await authClient.signIn.email({
-      email,
-      password,
-      callbackURL: "/discussion",
-    })
+    try {
+      const { error: signInError } = await authClient.signIn.email({
+        email,
+        password,
+        callbackURL: "/discussion",
+      })
 
-    setLoading(false)
+      if (signInError) {
+        setError(translateError(signInError.message))
+        return
+      }
 
-    if (signInError) {
-      setError(translateError(signInError.message))
-      return
+      router.push("/discussion")
+    } catch {
+      setError("Problème de connexion réseau. Vérifiez votre connexion et réessayez.")
+    } finally {
+      setLoading(false)
     }
-
-    router.push("/discussion")
   }
 
   return (

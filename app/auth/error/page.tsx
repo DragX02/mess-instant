@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
+import { codeErreurAuth } from "@/lib/auth-errors"
 import { translateError } from "@/lib/error-messages"
 import { Alert } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
@@ -16,11 +17,12 @@ const TITLES: Record<string, string> = {
 
 export default function AuthErrorPage() {
   const searchParams = useSearchParams()
-  const error = searchParams.get("error")
-  const errorDescription = searchParams.get("error_description")
+  // Seuls les codes connus sont affichés : error_description et tout texte libre de l'URL
+  // sont ignorés (sinon un lien piégé pourrait afficher un message arbitraire).
+  const error = codeErreurAuth(searchParams.get("error"))
 
   const message = error
-    ? translateError(errorDescription || error)
+    ? translateError(error)
     : "Une erreur s'est produite lors de l'authentification."
 
   return (

@@ -3,10 +3,15 @@ import path from "path"
 import { prisma } from "@/lib/prisma"
 import { canManageServer, getCurrentUser } from "@/lib/chat"
 import { erreur, nonConnecte, ok } from "@/lib/reponses"
+import { idValide } from "@/lib/validation-url"
 import { notifierConversation } from "@/lib/temps-reel"
 
 export async function DELETE(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
+
+  if (!idValide(id)) {
+    return erreur("Introuvable.", 404)
+  }
   const user = await getCurrentUser()
 
   if (!user) {

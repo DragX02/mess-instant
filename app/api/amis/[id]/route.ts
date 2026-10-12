@@ -1,10 +1,15 @@
 import { prisma } from "@/lib/prisma"
 import { findPrivateConversation, getCurrentUser } from "@/lib/chat"
 import { erreur, nonConnecte, ok } from "@/lib/reponses"
+import { idValide } from "@/lib/validation-url"
 import { publier } from "@/lib/temps-reel"
 
 export async function PATCH(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
+
+  if (!idValide(id)) {
+    return erreur("Introuvable.", 404)
+  }
   const user = await getCurrentUser()
 
   if (!user) {
@@ -31,6 +36,10 @@ export async function PATCH(request: Request, ctx: { params: Promise<{ id: strin
 
 export async function DELETE(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
+
+  if (!idValide(id)) {
+    return erreur("Introuvable.", 404)
+  }
   const user = await getCurrentUser()
 
   if (!user) {

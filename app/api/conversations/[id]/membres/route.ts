@@ -7,10 +7,15 @@ import {
   membresVisibles,
 } from "@/lib/chat"
 import { actionImpossible, erreur, nonConnecte, ok } from "@/lib/reponses"
+import { idValide } from "@/lib/validation-url"
 import { notifierConversation } from "@/lib/temps-reel"
 
 export async function GET(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
+
+  if (!idValide(id)) {
+    return erreur("Introuvable.", 404)
+  }
   const user = await getCurrentUser()
 
   if (!user || !(await isMember(user.id, id))) {
@@ -28,6 +33,10 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
 
 export async function POST(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
+
+  if (!idValide(id)) {
+    return erreur("Introuvable.", 404)
+  }
   const user = await getCurrentUser()
 
   if (!user) {

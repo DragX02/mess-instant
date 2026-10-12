@@ -1,10 +1,15 @@
 import { prisma } from "@/lib/prisma"
 import { DEFAULT_SERVER_ID, getCurrentUser, serverRole } from "@/lib/chat"
-import { actionImpossible, nonConnecte, ok } from "@/lib/reponses"
+import { actionImpossible, erreur, nonConnecte, ok } from "@/lib/reponses"
+import { idValide } from "@/lib/validation-url"
 import { membresServeur, publier } from "@/lib/temps-reel"
 
 export async function DELETE(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
+
+  if (!idValide(id)) {
+    return erreur("Introuvable.", 404)
+  }
   const user = await getCurrentUser()
 
   if (!user) {

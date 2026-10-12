@@ -2,10 +2,15 @@ import type { Conversation, User } from "@prisma/client"
 import { prisma } from "@/lib/prisma"
 import { canManageServer, getCurrentUser, isMember } from "@/lib/chat"
 import { actionImpossible, erreur, nonConnecte, ok } from "@/lib/reponses"
+import { idValide } from "@/lib/validation-url"
 import { destinatairesConversation, notifierConversation, publier } from "@/lib/temps-reel"
 
 export async function PATCH(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
+
+  if (!idValide(id)) {
+    return erreur("Introuvable.", 404)
+  }
   const user = await getCurrentUser()
 
   if (!user) {
@@ -29,6 +34,10 @@ export async function PATCH(request: Request, ctx: { params: Promise<{ id: strin
 
 export async function DELETE(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
+
+  if (!idValide(id)) {
+    return erreur("Introuvable.", 404)
+  }
   const user = await getCurrentUser()
 
   if (!user) {

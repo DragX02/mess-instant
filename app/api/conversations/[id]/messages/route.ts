@@ -4,12 +4,17 @@ import { prisma } from "@/lib/prisma"
 import { CHAMPS_UTILISATEUR, canRead, canWrite, getCurrentUser, nomAffiche } from "@/lib/chat"
 import { donnerPieces } from "@/lib/monnaie"
 import { erreur, nonConnecte } from "@/lib/reponses"
+import { idValide } from "@/lib/validation-url"
 import { notifierConversation } from "@/lib/temps-reel"
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024
 
 export async function GET(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
+
+  if (!idValide(id)) {
+    return erreur("Introuvable.", 404)
+  }
   const user = await getCurrentUser()
   const conversation = await prisma.conversation.findUnique({ where: { id } })
 
@@ -71,6 +76,10 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
 
 export async function POST(request: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
+
+  if (!idValide(id)) {
+    return erreur("Introuvable.", 404)
+  }
   const user = await getCurrentUser()
 
   if (!user) {

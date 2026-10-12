@@ -2,11 +2,12 @@ import { readFile } from "fs/promises"
 import path from "path"
 import { prisma } from "@/lib/prisma"
 import { canRead, getCurrentUser } from "@/lib/chat"
+import { nomFichierValide } from "@/lib/validation-url"
 
 export async function GET(request: Request, ctx: { params: Promise<{ nom: string }> }) {
   const { nom } = await ctx.params
 
-  if (!/^[a-zA-Z0-9.-]+$/.test(nom)) {
+  if (!nomFichierValide(nom)) {
     return new Response("Fichier introuvable", { status: 404 })
   }
 

@@ -102,7 +102,7 @@ export default async function ProfilePage() {
                   }}
                 >
                   <Button variant="destructive" className="w-full" type="submit">
-                    Déconnexion
+                    supprimer mon compte
                   </Button>
                 </form>
               </CardContent>

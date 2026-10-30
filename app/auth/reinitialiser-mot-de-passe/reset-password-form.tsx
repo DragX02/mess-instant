@@ -4,9 +4,12 @@ import { useState, type FormEvent } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { authClient } from "@/lib/auth-client"
+import { translateError } from "@/lib/error-messages"
+import { EMPTY_PASSWORD_STRENGTH, validatePasswordStrength } from "@/lib/password-validator"
+import { Alert } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Field } from "@/components/ui/field"
+import { PasswordInput, PasswordStrengthMeter } from "@/components/auth"
 
 export function ResetPasswordForm() {
   const router = useRouter()
@@ -18,6 +21,12 @@ export function ResetPasswordForm() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [passwordStrength, setPasswordStrength] = useState(EMPTY_PASSWORD_STRENGTH)
+
+  function handlePasswordChange(value: string) {
+    setNewPassword(value)
+    setPasswordStrength(validatePasswordStrength(value))
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -28,6 +37,11 @@ export function ResetPasswordForm() {
       return
     }
 
+    if (!passwordStrength.isValid) {
+      setError("Le mot de passe n'est pas assez fort. Veuillez respecter les critères.")
+      return
+    }
+
     if (newPassword !== confirmPassword) {
       setError("Les mots de passe ne correspondent pas.")
       return
@@ -35,80 +49,64 @@ export function ResetPasswordForm() {
 
     setLoading(true)
 
-    const { error: resetError } = await authClient.resetPassword({
-      newPassword,
-      token,
-    })
+    const { error: resetError } = await authClient.resetPassword({ newPassword, token })
 
     setLoading(false)
 
     if (resetError) {
-      setError(resetError.message ?? "Une erreur est survenue.")
+      setError(translateError(resetError.message))
       return
     }
 
     setSuccess(true)
-    setTimeout(() => router.push("/connexion"), 2000)
+    setTimeout(() => router.push("/auth/connexion"), 2000)
   }
 
   if (!token) {
     return (
-      <p
-        role="alert"
-        className="rounded-[var(--radius)] border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-      >
+      <Alert>
         Ce lien de réinitialisation est invalide ou a expiré.{" "}
         <Link href="/auth/mot-de-passe-oublie" className="underline">
           Redemander un lien
         </Link>
-      </p>
+      </Alert>
     )
   }
 
   if (success) {
     return (
-      <p className="rounded-[var(--radius)] border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
+      <Alert variant="info">
         Votre mot de passe a été réinitialisé. Redirection vers la connexion...
-      </p>
+      </Alert>
     )
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="new-password">Nouveau mot de passe</Label>
-        <Input
+      <Field label="Nouveau mot de passe" htmlFor="new-password" className="gap-2">
+        <PasswordInput
           id="new-password"
-          type="password"
           autoComplete="new-password"
           required
           minLength={8}
           value={newPassword}
-          onChange={(event) => setNewPassword(event.target.value)}
+          onChange={(event) => handlePasswordChange(event.target.value)}
         />
-      </div>
+        <PasswordStrengthMeter strength={passwordStrength} />
+      </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="confirm-password">Confirmer le mot de passe</Label>
-        <Input
+      <Field label="Confirmer le mot de passe" htmlFor="confirm-password">
+        <PasswordInput
           id="confirm-password"
-          type="password"
           autoComplete="new-password"
           required
           minLength={8}
           value={confirmPassword}
           onChange={(event) => setConfirmPassword(event.target.value)}
         />
-      </div>
+      </Field>
 
-      {error && (
-        <p
-          role="alert"
-          className="rounded-[var(--radius)] border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-        >
-          {error}
-        </p>
-      )}
+      {error && <Alert>{error}</Alert>}
 
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? "Réinitialisation..." : "Réinitialiser le mot de passe"}

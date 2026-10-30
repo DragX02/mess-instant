@@ -1,4 +1,6 @@
 import { Resend } from "resend"
+import { render } from "@react-email/components"
+import { VerificationEmailDark, ResetPasswordEmailDark } from "@/emails/templates"
 
 let resend: Resend | undefined
 
@@ -19,12 +21,19 @@ export async function sendVerificationEmail(to: string, url: string) {
     return
   }
 
-  await getResend().emails.send({
+  const emailHtml = await render(VerificationEmailDark({ verificationUrl: url }))
+
+  const { error } = await getResend().emails.send({
     from: FROM_EMAIL,
     to,
-    subject: "Vérifiez votre adresse email",
-    html: `<p>Bienvenue sur Helix ! Cliquez sur le lien ci-dessous pour vérifier votre adresse email :</p><p><a href="${url}">${url}</a></p>`,
+    subject: "Vérifiez votre adresse email - Helix",
+    html: emailHtml,
   })
+
+  if (error) {
+    console.error("[resend] Erreur envoi vérification:", error)
+    throw new Error(error.message)
+  }
 }
 
 export async function sendResetPasswordEmail(to: string, url: string) {
@@ -33,10 +42,17 @@ export async function sendResetPasswordEmail(to: string, url: string) {
     return
   }
 
-  await getResend().emails.send({
+  const emailHtml = await render(ResetPasswordEmailDark({ resetUrl: url }))
+
+  const { error } = await getResend().emails.send({
     from: FROM_EMAIL,
     to,
-    subject: "Réinitialisez votre mot de passe",
-    html: `<p>Vous avez demandé la réinitialisation de votre mot de passe. Cliquez sur le lien ci-dessous :</p><p><a href="${url}">${url}</a></p><p>Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>`,
+    subject: "Réinitialiser votre mot de passe - Helix",
+    html: emailHtml,
   })
+
+  if (error) {
+    console.error("[resend] Erreur envoi réinitialisation:", error)
+    throw new Error(error.message)
+  }
 }

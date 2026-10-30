@@ -22,6 +22,12 @@ export const metadata: Metadata = {
   title: "Helix - Messagerie temps réel B2B",
   description:
     "Messagerie temps réel pour les équipes B2B. Conversations sécurisées, groupes organisés, permissions natives.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Helix",
+  },
+  manifest: "/site.webmanifest",
 }
 
 export default function RootLayout({

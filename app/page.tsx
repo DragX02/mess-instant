@@ -4,17 +4,33 @@ import Link from "next/link"
 import { ChatPreview } from "@/components/chat-preview"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
+import { Logo } from "@/components/logo"
+import { PackCard } from "@/components/pack-card"
+import { GRADES, PACKS } from "@/lib/boutique"
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="text-2xl font-bold font-sans text-primary">Helix</div>
+          <Logo href="/" size="sm" withText />
 
           <div className="flex items-center gap-3">
+            <a
+              href="#tarifs"
+              className="hidden text-sm text-muted-foreground hover:text-foreground sm:block"
+            >
+              Tarifs
+            </a>
             <ThemeToggle />
+            <Button
+              size="sm"
+              variant="outline"
+              nativeButton={false}
+              render={<Link href="/discussion" />}
+            >
+              Canal info
+            </Button>
             <Button size="sm" nativeButton={false} render={<Link href="/auth/connexion" />}>
               Se connecter
             </Button>
@@ -22,7 +38,6 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Hero Section */}
       <section className="mx-auto max-w-6xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
         <div className="grid items-center gap-16 md:grid-cols-2">
           <div className="flex flex-col gap-8">
@@ -67,7 +82,39 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      <section id="tarifs" className="border-t border-border py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 text-3xl font-bold font-sans md:text-4xl">Packs de pièces</h2>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+              Helix est gratuit. Les pièces débloquent les grades et les thèmes : jusqu&apos;à{" "}
+              {GRADES[GRADES.length - 1].maxServeurs} serveurs, la navigation Univers et plus
+              encore.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {PACKS.map((pack) => (
+              <PackCard key={pack.id} pack={pack}>
+                <Button
+                  className="mt-auto w-full"
+                  variant={pack.reduction > 0 ? "default" : "outline"}
+                  nativeButton={false}
+                  render={<Link href="/auth/inscription" />}
+                >
+                  Essayer maintenant
+                </Button>
+              </PackCard>
+            ))}
+          </div>
+
+          <p className="mt-8 text-center text-sm text-muted-foreground">
+            Projet de démonstration : les achats sont fictifs, aucun paiement réel n&apos;est
+            demandé.
+          </p>
+        </div>
+      </section>
+
       <section className="border-t border-border bg-muted/30 py-16 md:py-24">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="mb-4 text-3xl font-bold font-sans md:text-4xl">
@@ -82,7 +129,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-border bg-background py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 sm:px-6 md:flex-row lg:px-8">
           <div className="text-lg font-bold font-sans text-primary">Helix</div>

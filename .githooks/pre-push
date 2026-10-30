@@ -1,0 +1,17 @@
+#!/bin/sh
+# Bloque le push si TypeScript ne compile pas.
+# Cette vérification est la même que `npm run typecheck` dans la CI (.github/workflows/ci.yml),
+# mais elle tourne avant que le code parte : Coolify ne déploie donc jamais un build cassé.
+#
+# Contourner ponctuellement : git push --no-verify
+
+echo "pre-push : vérification TypeScript en cours..."
+
+if ! npm run --silent typecheck; then
+  echo "" >&2
+  echo "Push annulé : le projet ne compile pas (erreurs ci-dessus)." >&2
+  echo "Corrige-les, ou force le push avec : git push --no-verify" >&2
+  exit 1
+fi
+
+echo "pre-push : TypeScript OK, push autorisé."
